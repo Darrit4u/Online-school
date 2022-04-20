@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Online school</title>
+    {% load static %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="common">
+    <div class="main">
+        <div class="filling">
+          {% block content %}
+          {% endblock %}
+        </div>
+    </div>
+    <nav class="navigation" id="Navigation">
+       <div class="login">
+         {% if request.user.is_authenticated %}
+           <a href="/student_page">
+             <img src="{% static 'images/ава.png' %}" alt="О нас">
+           </a>
+         {% else %}
+           <a href="/login">
+             <img src="{% static 'images/ава.png' %}" alt="О нас">
+           </a>
+         {% endif %}
+       </div>
+       <div id="frame_nav">
+       <div class="bg_but" id="b2">
+          <a href="/about" id="but_href">
+            <img src="{% static 'images/онас.png' %}" alt="О нас">
+          </a>
+        </div>
+        <div class="bg_but" id="b3">
+          <a href="/schedule" id="but_href"><img src="{% static 'images/расписание.png' %}" height="85px" width="85px" alt="Расписание"></a>
+        </div>
+        <div class="bg_but" id="b4">
+          <a href="/product" id="but_href"><img src="{% static 'images/продукты.png' %}" height="85px" width="85px" alt="Продукты"></a>
+        </div>
+       <div class="bg_but" id="b5">
+          <a href="/feedback" id="but_href"><img src="{% static 'images/отзывы.png' %}" height="85px" width="85px" alt="Продукты"></a>
+        </div>
+      </div>
+    </nav>
+    <p class="header">{% block header %}{% endblock %}</p>
+    <div id="contacts">
+        <div id="frame_cont">
+          <div id="tg">
+            <a href="/" id="href_cont">
+              <img src="{% static 'images/telegram.png' %}" alt="tg">
+            </a>
+          </div>
+          <div id="vk">
+            <a href="https://vk.com/obshaga_na_100"  id="href_cont">
+              <img src="{% static 'images/vk.png' %}" alt="vk">
+            </a>
+          </div>
+          <div id="inst">
+            <a href="/" id="href_cont">
+              <img src="{% static 'images/instagram.png' %}" alt="inst">
+            </a>
+          </div>
+        </div>
+    </div>
+  </div>
+</body>
+</html>
+
+<br/><br/>
+<style>* {
+  box-sizing: border-box;
+}
+/* Google Chrome, Opera*/
+::-webkit-scrollbar{ width: 0;}
+html {
+  height: 100%;
+}
+body {
+  font-size: 14px;
+  margin: 0;
+  min-height: 100%;
+}
+.common {
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,1);
+  opacity: 1;
+  position: absolute;
+  overflow: hidden;
+}
+.main {
+  height: 80%;
+  background: white no-repeat center center;
+  background-size: cover;
+  opacity: 1;
+  position: relative;
+  overflow: hidden;
+}
+.filling {
+  width: 92%;
+  height: 92%;
+  position: absolute;
+  top: 9%;
+  overflow: hidden;
+}
+
+.navigation {
+  width: 8%;
+  height: 100%;
+  background: linear-gradient(180deg, #9CE4FC 0%, #94B7F0 100%);
+  background-size: cover;
+  opacity: 1;
+  position: fixed;
+  overflow: hidden;
+  right: 0;
+  top: 0;
+  z-index: 3;
+}
+#frame_nav {
+    width: 100%;
+    top: 11%;
+    height: 65%;
+    max-height: 400px;
+    position: absolute;
+    overflow: hidden;
+}
+.login{
+  height: 11%;
+  width: 70%;
+  position: absolute;
+  left: 15%;
+  top: 1%;
+  overflow: hidden;
+}
+.login a {
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.login a:before {
+  content: "";
+  padding-top: 100%;
+  display: block;
+}
+.login img {
+    width: 80%;
+    top: 0;
+    left: 10%;
+    position: absolute;
+    overflow: hidden;
+}
+.login img:before {
+  content: "";
+  padding-top: 60%;
+  display: block;
+}
+.bg_but {
+  width: 100%;
+  height: 20%;
+  position: absolute;
+}
+.bg_but:before {
+  content: "";
+  padding-top: 100%;
+  display: block;
+}
+#but_href {
+  position: inherit;
+  top: 21%;
+  left: 21%;
+  width: 58%;
+  background: #EFEFEF;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+  overflow: hidden;
+}
+#but_href:before {
+  content: "";
+  padding-top: 100%;
+  display: block;
+}
+#but_href img {
+  position: absolute;
+  left: 13%;
+  top: 13%;
+  width: 74%;
+  height: 74%;
+}
+#b2 { top: 3%; }
+#b3 { top: 27%; }
+#b4 { top: 49%; }
+#b5 { top: 71%; }
+
+.header {
+  top: 3%;
+  width: 7%;
+  position: absolute;
+  left: 3.5%;
+  font-style: normal;
+  font-size: 35px;
+  line-height: 3.5%;
+  text-align: center;
+  text-transform: lowercase;
+
+  color: #043d8b;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  opacity: 1;
+}
+#contacts {
+  width: 100%;
+  height: 120px;
+  position: absolute;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 2;
+  background: linear-gradient(180deg, #033C8A -145.26%, #94B7F0 259.74%) center center;
+}
+#frame_cont {
+    top: 10%;
+    left: 30%;
+    width: 40%;
+    height: 100%;
+    position: absolute;
+}
+#frame_cont img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+    float: left;
+    object-fit: contain;
+}
+#href_cont {
+    width: 50%;
+    height: 50%;
+    top: 25%;
+    right: 25%;
+    position: absolute;
+}
+#tg {
+  background: #94B7F0;
+  border-radius: 50%;
+  width: 10%;
+  position: absolute;
+}
+#tg:before {
+  content: "";
+  padding-top: 100%;
+  display: block;
+}
+#vk {
+  background: #94B7F0;
+  border-radius: 50%;
+  width: 10%;
+  left: 20%;
+  top: 0;
+  position: absolute;
+}
+#vk:before {
+  content: "";
+  padding-top: 100%;
+  display: block;
+}
+#inst {
+  background: #94B7F0;
+  border-radius: 50%;
+  width: 10%;
+    left: 40%;
+    top: 0;
+    position: absolute;
+}
+#inst:before {
+  content: "";
+  padding-top: 100%;
+  display: block;
+}
+</style>

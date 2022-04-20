@@ -1,0 +1,18 @@
+{% extends 'main_pages/../base.html' %}
+
+{% block content %}
+  {% block  header %}<h2>Login</h2>{% endblock %}
+  {{ error_message }}
+    <form method="post">
+      {% csrf_token %}
+      <label>
+          <input type="text" name="username">
+        </label>
+        <label>
+          <input type="password" name="password">
+        </label>
+          <input type="submit" value="Submit">
+    </form>
+
+    <a href="/sign_up/"><h1>Регистрация</h1></a>
+{% endblock %}

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student page</title>
+</head>
+<body>
+Hi student. It's your personal area.
+<p>
+{% if course %}
+    <a href="/student_page/course_1">Первый курс</a>
+{% endif %}
+</p>
+<a href="/student_page/settings">Настройки профиля</a>
+</body>
+</html>

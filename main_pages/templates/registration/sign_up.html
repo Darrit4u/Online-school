@@ -1,0 +1,49 @@
+{% extends "main_pages/../base.html" %}
+
+{% block content %}
+
+    <h1>Регистрация</h1>
+    {% if message %}
+        <h3>{{ message }}</h3>
+    {% endif %}
+
+    {% if error %}
+        <h3>{{ error }}</h3>
+    {% endif %}
+    <form method = "post">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td><h4>Имя:</h4></td>
+                <td><input type = "text" name = "firstname"></td>
+            </tr>
+
+            <tr>
+                <td><h4>Фамилия:</h4></td>
+                <td><input type = "text" name = "lastname"></td>
+            </tr>
+
+            <tr>
+                <td><h4>Логин:</h4></td>
+                <td><input type = "text" name = "username"></td>
+            </tr>
+
+            <tr>
+                <td><h4>Email:</h4></td>
+                <td><input type = "email" name = "email"></td>
+            </tr>
+
+            <tr>
+                <td><h4>Пароль:</h4></td>
+                <td><input type = "password" name = "password"></td>
+            </tr>
+
+            <tr>
+                <td><h4>Пароль еще раз:</h4></td>
+                <td><input type = "password" name = "password2"></td>
+            </tr>
+
+        </table>
+        <input type = "submit" value = "Регистрация">
+    </form>
+{% endblock %}
