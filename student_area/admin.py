@@ -12,6 +12,7 @@ class QuestionAdmin(admin.ModelAdmin):
         'num_task',
         'text',
         'max_point',
+        'visible'
     )
 
 
@@ -19,6 +20,7 @@ class ChoiceAdmin(admin.ModelAdmin):
     list_display = (
         'question',
         'text',
+        'right_or_not'
     )
     list_filter = ('question',)
 
@@ -28,7 +30,7 @@ class AnswerAdmin(admin.ModelAdmin):
         'user',
         'question',
         'choice',
-        'created'
+        'data_created',
     )
     list_filter = ('user',)
 

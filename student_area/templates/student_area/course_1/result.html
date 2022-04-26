@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+Result
+
+<div align="center"><h1>{{ question.question_text }}</h1></div>
+
+Вы набрали {{ all_points }} баллов/балла.
+
+{% for question in questions %}
+  <div>{{ question.text }}</div>
+  {% for choice in question.choice_set.all %}
+    <div class="container" align="center" style="width:400px">
+    {% if question.id in errors%}
+        <label for="choice{{ forloop.counter }}" class="form-control" ><div align="left" style="background-color: red">{{ choice.text }}</div></label>
+    {% else %}
+        <label for="choice{{ forloop.counter }}" class="form-control"><div align="left"  style="background-color: green">{{ choice.text }}</div></label>
+    {% endif %}
+        <br>
+    </div>
+  {% endfor %}
+{% endfor %}
+<br>
+</body>
+</html>

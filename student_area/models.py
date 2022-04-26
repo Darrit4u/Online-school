@@ -22,23 +22,32 @@ class Question(models.Model):
     visible = models.BooleanField(default=False)
 
     def __str__(self):
-        return "{} вопрос {}".format(self.num_test, self.num_task)
+        return "Тест {} вопрос {}".format(self.num_test, self.num_task)
 
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.TextField()
     lock_other = models.BooleanField(default=False)
+    right_or_not = models.BooleanField(default=None)
 
     def __str__(self):
         return self.text
 
 
+# Ответ пользователя (каждый выбор = одной модели)
 class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
     choice = models.ForeignKey(Choice, on_delete=models.DO_NOTHING)
-    created = models.DateTimeField(auto_now_add=True)
+    data_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.choice.text
+
+
+# class Result(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+#     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
+#     all_points = models.IntegerField()
+#     answers = models.ForeignKey(Answer, on_delete=models.DO_NOTHING)

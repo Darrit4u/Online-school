@@ -7,9 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-from .models import Homework, Question
+from .models import Homework, Question, Choice, Answer
 from .forms import HomeworkForm
-from .serializers import QuestionSerializer, AnswerSerializer
 from registration.models import Student, Tutor
 from django.contrib.auth.models import User
 
@@ -56,24 +55,55 @@ def lesson_1(request):
     return render(request, 'student_area/course_1/1.html', {'message': message, 'form': form})
 
 
-class GetQuestion(GenericAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = QuestionSerializer
-    template_name = 'student_area/course_1/test.html'
+def get_question(request, num_test):
+    questions = list(Question.objects.filter(num_test=num_test))  # список всех вопрос в тесте
+    if Answer.objects.filter(question=questions[0]).exists():
+        return render(request, 'student_area/course_1/result.html', {})
+    if request.method == 'POST':
+        user = User.objects.get(username=request.user)
+        all_points = 0
+        errors = {}
+        for question in questions:
+            choices = request.POST.getlist('choice')
+            question_points = 0
+            for choice in choices:
+                c = Choice.objects.get(id=int(choice))
+                user_answer = Answer(user=user, question=question, choice=c, data_created=timezone.now())
+                user_answer.save()
+                if c.right_or_not:
+                    all_points += 1
+                    question_points += 1
+            if question_points < question.max_point:
+                errors[question.id] = question_points
+        return render(request, 'student_area/course_1/result.html', {
+            'questions': questions,
+            'all_points': all_points,
+            'errors': errors
+        })
+    return render(request, 'student_area/course_1/test.html', {'questions': questions})
 
-    def get(self, request, format=None):
-        questions = Question.objects.filter(visible=True, )
-        last_point = QuestionSerializer(questions, many=True)
-        return Response(last_point.data)
 
+def get_result(request, num_test):
+    pass
 
-class QuestionAnswer(GenericAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = AnswerSerializer
-    template_name = 'student_area/course_1/answer.html'
-
-    def post(self, request, format=None):
-        answer = AnswerSerializer(data=request.data, context=request)
-        if answer.is_valid(raise_exception=True):
-            answer.save()
-            return Response({'result': 'OK'})
+# class GetQuestion(GenericAPIView):
+#     permission_classes = (IsAuthenticated,)
+#     serializer_class = QuestionSerializer
+#     template_name = 'student_area/course_1/test.html'
+#
+#     def get(self, request, format=None):
+#         questions = Question.objects.filter(visible=True, )
+#         last_point = QuestionSerializer(questions, many=True)
+#         return Response(last_point.data)
+#
+#
+# class QuestionAnswer(GenericAPIView):
+#     permission_classes = (IsAuthenticated,)
+#     serializer_class = AnswerSerializer
+#     template_name = 'student_area/course_1/answer.html'
+#
+#     def post(self, request, format=None):
+#         answer = AnswerSerializer(data=request.data, context=request)
+#         if answer.is_valid(raise_exception=True):
+#             answer.save()
+#             return Response({'result': 'OK'})
