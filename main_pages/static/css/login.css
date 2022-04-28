@@ -1,0 +1,6 @@
+#login_bg {
+    display: inline-block;
+    background: rgba(156, 228, 252, 0.5);
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+}

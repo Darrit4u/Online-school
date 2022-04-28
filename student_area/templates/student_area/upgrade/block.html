@@ -1,0 +1,33 @@
+{% extends 'main_pages/../base.html' %}
+{% load static %}
+
+{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">{{ title }}</h2>{% endblock %}
+{{ error_message }}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/block.css' %}">
+    <div style="margin: 10%">
+    <ul class="navbar-nav">
+    {% for i in num_lessons %}
+        <li class="nav-item">
+        {% if i <= last_lesson %}
+            <a href="/student_page/upgrade/{{ name_block }}/{{ i }}">
+                <div class="container-fluid" id="frame" style="background-color: #CDF1FD;">
+                    <div class="row justify-content-between">
+                    <div class="col" id="text">{{ i }} задание</div>
+                    <div class="col-auto"><img src={% static 'images/Arrow.png' %}></div>
+                    </div>
+                </div>
+            </a>
+        {% else %}
+            <div class="container-fluid" id="frame" style="background-color: #C7DAF5">
+                <div class="row justify-content-between">
+                <div class="col" id="text">{{ i }} задание</div>
+                <div class="col-auto"><img src={% static 'images/lock.png' %}></div>
+                </div>
+            </div>
+        {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    </div>
+{% endblock %}
