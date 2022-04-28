@@ -14,15 +14,44 @@ class Homework(models.Model):
         return self.who_send.username
 
 
+class Block(models.Model):
+    num_lessons = models.IntegerField()
+    name = models.CharField(max_length=200)
+    visible = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+class Lesson(models.Model):
+    what_block = models.ForeignKey(Block, on_delete=models.CASCADE)
+    num = models.IntegerField(default=0)
+    video = models.CharField(max_length=200)
+
+    def __str__(self):
+        return "{} {}".format(self.what_block, self.num)
+
+
+class Test(models.Model):
+    what_block = models.ForeignKey(Block, on_delete=models.CASCADE)
+    what_lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE)
+    num = models.IntegerField(default=0)
+    num_question = models.IntegerField(default=0)
+    theme = models.CharField(max_length=500)
+
+    def __str__(self):
+        return "{} {}".format(self.what_block, self.num)
+
+
 class Question(models.Model):
-    num_test = models.IntegerField(default=0)
+    what_test = models.ForeignKey(Test, on_delete=models.CASCADE, default=1)
     num_task = models.IntegerField(default=0)
     text = models.TextField()
     max_point = models.IntegerField(default=1)
     visible = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Тест {} вопрос {}".format(self.num_test, self.num_task)
+        return "Тест {} вопрос {}".format(self.what_test.theme, self.num_task)
 
 
 class Choice(models.Model):

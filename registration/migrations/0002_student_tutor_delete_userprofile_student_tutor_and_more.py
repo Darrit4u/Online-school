@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(max_length=600)),
                 ('last_name', models.CharField(max_length=600)),
                 ('email', models.EmailField(max_length=254)),
-                ('course_1', models.BooleanField(default=False)),
+                ('upgrade', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(

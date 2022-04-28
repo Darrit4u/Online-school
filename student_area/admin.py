@@ -6,9 +6,35 @@ from .models import *
 admin.site.register(Homework)
 
 
+class BlockAdmin(admin.ModelAdmin):
+    list_display = (
+        'num_lessons',
+        'name',
+        'visible'
+    )
+
+
+class TestAdmin(admin.ModelAdmin):
+    list_display = (
+        'what_block',
+        'what_lesson',
+        'num',
+        'theme'
+    )
+    list_filter = ('what_block', )
+
+
+class LessonAdmin(admin.ModelAdmin):
+    list_display = (
+        'what_block',
+        'num',
+        'video',
+    )
+
+
 class QuestionAdmin(admin.ModelAdmin):
     list_display = (
-        'num_test',
+        'what_test',
         'num_task',
         'text',
         'max_point',
@@ -38,3 +64,6 @@ class AnswerAdmin(admin.ModelAdmin):
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Choice, ChoiceAdmin)
 admin.site.register(Answer, AnswerAdmin)
+admin.site.register(Block, BlockAdmin)
+admin.site.register(Test, TestAdmin)
+admin.site.register(Lesson, LessonAdmin)

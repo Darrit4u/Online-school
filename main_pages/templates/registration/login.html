@@ -1,18 +1,37 @@
 {% extends 'main_pages/../base.html' %}
+{% load static %}
 
+{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">вход в личный кабинет</h2>{% endblock %}
 {% block content %}
-  {% block  header %}<h2>Login</h2>{% endblock %}
-  {{ error_message }}
-    <form method="post">
-      {% csrf_token %}
-      <label>
-          <input type="text" name="username">
-        </label>
-        <label>
-          <input type="password" name="password">
-        </label>
-          <input type="submit" value="Submit">
-    </form>
+<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <div class="container">
+    <div class="row" style="margin: 3% 0">
+        <div class="col d-flex justify-content-center"><img src="{% static "images/светлая_ава.png" %}"> </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col d-flex justify-content-center">
+            <div id="login_bg">
+            <form method="post">
+              {% csrf_token %}
+                <div class="mb-3" style="padding: 5% 25%; margin: 10%">
+                    <label>
+                        <input type="text" class="form-control" placeholder="Логин" aria-describedby="basic-addon1" name="username">
+                    </label>
+                </div>
+                <div class="mb-3" style="padding: 10%;">
+                    <label for="exampleInputPassword1">
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Пароль" name="password">
+                    </label>
+                </div>
+                <div class="d-flex justify-content-center">
+                <input type="submit" value="Войти">
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    </div>
 
+  {{ error_message }}
     <a href="/sign_up/"><h1>Регистрация</h1></a>
 {% endblock %}
