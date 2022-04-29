@@ -52,16 +52,18 @@ def sign_up(request):
         password2 = request.POST.get('password2')
         if User.objects.filter(username=username).exists():
             context['error'].append('Такое имя пользователя уже есть, пожалуйста, выберите другое.')
-        if User.objects.filter(email=email).exists():
-            context['error'].append('Аккаунт с такой почтой уже существует!')
-        if password != password2:
+        elif User.objects.filter(email=email).exists():
+            context['error'].append('Аккаунт с таким вк уже существует!')
+        elif password != password2:
             context['error'].append('Пароли не совпадают. Будьте аккуратнее')
+        elif firstname == '' or lastname == '':
+            context['error'].append('Не оставляется пустые поля')
         else:
             if password == password2:
                 User.objects.create_user(username, email, password)
                 user = User.objects.get(username=username)
                 tutor = Tutor.objects.get(user=User.objects.get(username='tutor'))
-                s = Student(user=user, first_name=firstname, last_name=lastname, email=email, course_1=False, tutor=tutor)
+                s = Student(user=user, first_name=firstname, last_name=lastname, email=email, upgrade=False, tutor=tutor)
                 s.save()
                 return HttpResponseRedirect('/login')
     return render(request, 'registration/sign_up.html', context)

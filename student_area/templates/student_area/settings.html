@@ -1,12 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-settings
-<p><a href="/student_page/">Мои продукты</a></p>
-<p><a href="/logout/">Выход</a></p>
-</body>
-</html>
+{% extends 'main_pages/../base.html' %}
+{% load static %}
+
+{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">вход в личный кабинет</h2>{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <div class="container">
+    <div class="row" style="margin-top: 3%">
+        <div class="col d-flex justify-content-center"><img style="height: 80%!important;" src="{% static "images/светлая_ава.png" %}" alt="image"> </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col d-flex justify-content-center">
+                <div class="row align-items-center " style="margin: 5%">
+
+                <div class="col">
+                    <div class="mb-3" style="margin-top: 5%">
+                        <label>
+                            <input type="text" class="form-control" placeholder="Имя" aria-describedby="basic-addon1" name="firstname">
+                        </label>
+                    </div>
+                    <div class="mb-3" style="">
+                        <label>
+                            <input type="text" class="form-control" placeholder="Фамилия" name="lastname">
+                        </label>
+                    </div>
+                    <div class="mb-3" style="">
+                        <label>
+                            <input type="text" class="form-control" placeholder="Логин" name="username">
+                        </label>
+                    </div>
+                    <div class="mb-3" style="">
+                        <label>
+                            <input type="text" class="form-control" placeholder="Ссылка на вк" name="email">
+                        </label>
+                    </div>
+                    <div class="mb-3" style="">
+                        <label>
+                            <input type="password" class="form-control" placeholder="Пароль" name="password">
+                        </label>
+                    </div>
+                    <div class="mb-3" style="">
+                        <label>
+                            <input type="password" class="form-control" placeholder="Повторите пароль" name="password2">
+                        </label>
+                    </div>
+
+                    </div>
+                </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
