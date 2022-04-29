@@ -8,7 +8,7 @@ def index(request):
 
 
 def about(request):
-    return render(request, 'base.html')
+    return render(request, 'main_pages/about.html')
 
 
 def schedule(request):
