@@ -44,7 +44,7 @@ class Test(models.Model):
 
 
 class Question(models.Model):
-    what_test = models.ForeignKey(Test, on_delete=models.CASCADE, default=1)
+    what_test = models.ForeignKey(Test, on_delete=models.CASCADE)
     num_task = models.IntegerField(default=0)
     text = models.TextField()
     max_point = models.IntegerField(default=1)

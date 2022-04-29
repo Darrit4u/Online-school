@@ -1,0 +1,21 @@
+#frame {
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    margin-bottom: 5%;
+    padding: 2%;
+}
+#text {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 35px;
+    line-height: 43px;
+    color: #033C8A;
+    text-align: start;
+}
+#frame img {
+    margin-right: 2%;
+}
+a {
+    text-decoration: none; /* Убираем подчёркивание */
+}

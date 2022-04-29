@@ -42,7 +42,7 @@ def logout_view(request):
 
 
 def sign_up(request):
-    context = {}
+    context = {'error': []}
     if request.method == 'POST':
         firstname = request.POST.get('firstname')
         lastname = request.POST.get('lastname')
@@ -51,9 +51,11 @@ def sign_up(request):
         password = request.POST.get('password')
         password2 = request.POST.get('password2')
         if User.objects.filter(username=username).exists():
-            context['error'] = 'Такое имя пользователя уже есть, пожалуйста, выберите другое.'
-        elif User.objects.filter(email=email).exists():
-            context['error'] = 'Аккаунт с такой почтой уже существует!'
+            context['error'].append('Такое имя пользователя уже есть, пожалуйста, выберите другое.')
+        if User.objects.filter(email=email).exists():
+            context['error'].append('Аккаунт с такой почтой уже существует!')
+        if password != password2:
+            context['error'].append('Пароли не совпадают. Будьте аккуратнее')
         else:
             if password == password2:
                 User.objects.create_user(username, email, password)
