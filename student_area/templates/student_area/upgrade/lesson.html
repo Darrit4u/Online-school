@@ -36,7 +36,7 @@
 <div id="video" class="d-flex justify-content-center">
     <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
-<a href="/file/{{ file.answer.name }}" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку</a>
+<a href="/file/{{ num_block }}.{{ num_lesson }} .pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку</a>
 <div id="test">
 <form method="post">
 {% csrf_token %}
@@ -71,6 +71,26 @@
 <button type="submit" name="Answer" class="btn btn-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Отправить</button>
 </div>
 </form>
+</div>
+
+<div>
+    {% if recent_res %}
+        <div id="text">Предыдущие результаты:</div>
+        <ul>
+            {% for res in recent_res %}
+                <li>
+                    <a href="/test/upgrade/{{ res.id }}">Тест за {{ res.data_created }}. Кол-во баллов {{ res.all_points }}. Статус:
+                    {% if res.status_check == 0 %}
+                        РНО не отправлено
+                    {% elif res.status_check == 1 %}
+                        на проверке
+                    {% else %}
+                         принято
+                    {% endif %}
+                </a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </div>
 </body>
 </html>

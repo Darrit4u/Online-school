@@ -1,36 +1,40 @@
 {% extends 'main_pages/../base_tutor.html' %}
 {% load static %}
 
-{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">upgrade</h2>{% endblock %}
+{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">{{ first_name_student }} {{ last_name_student }}</h2>{% endblock %}
 {{ error_message }}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/block.css' %}">
     <div style="margin: 5%">
     <div class="row justify-content-md-center">
-        <div class="col text-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 35px; margin-bottom: 3%">ученики</div>
+        <div class="col text-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 35px; margin-bottom: 3%">РНО</div>
     </div>
     <div class="row justify-content-md-center">
     <ul class="navbar-nav">
     {% for t in task %}
         <li class="nav-item">
             <div class="container-fluid" id="frame" style="background-color: #CDF1FD;">
-                <div class="row justify-content-between" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 28px; text-align: center; margin-bottom: 2%; margin-left: 2%"> Блок {{ t.what_block.name }}. День {{ t.what_lesson.num }}</div>
-                {% for file in homework %}
-                    {% if file.num_task == t.id %}
-                        <div class="col"><a href="/file/{{ file.answer.name }}">{{ file.answer.name }} </a><br></div>
+                <div class="row d-flex justify-content-md-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 28px; text-align: center; margin-bottom: 3%; margin-left: 2%">Блок {{ t.what_block.readable_name }}. Тест {{ t.what_lesson.num }}</div>
+                {% for res, i in context.items %}
+                    <div class="row">
+                    <div class="col" style="margin-bottom: 3%">
+                        {% for file in i %}
+                            <div class="row"><a href="/file/{{ file }}"><div style="font-family: 'Montserrat', sans-serif; font-size: 24px; width: 100%">{{ file }}</div> </a><br></div>
+                        {% endfor %}
+                    </div>
                         <div class="col">
-                        <form method="post" enctype="multipart/form-data">
-                          {% csrf_token %}
-                            <div class="mb-3">
-                              <label for="formFileMultiple" class="form-label"></label>
-                              <input class="form-control" type="file" id="formFileMultiple" name="docfile" multiple>
-                            </div>
-                            <p><div style="margin-top: 2%; margin-left: 1%; display: inline-block; width: 15%">
-                            <button type="submit" name="Answer" class="btn btn-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Отправить</button>
-                            </div>
-                        </form>
+                            <form method="post" enctype="multipart/form-data">
+                              {% csrf_token %}
+                                <div style="margin-top: 2%; margin-left: 1%; display: inline-block;">
+                                    {% if res.status_check == 1 %}
+                                    <button type="submit" name="{{ res.id }}" class="btn-md btn-outline-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Принять</button>
+                                    {% else %}
+                                    <button type="submit" name="{{ res.id }}" class="btn-md btn-outline-primary" style="border-radius: 15px; width: 100%; font-size: 24px" disabled>Уже принято</button>
+                                    {% endif %}
+                                </div>
+                            </form>
                         </div>
-                    {% endif %}
+                    </div>
                 {% endfor %}
             </div>
         </li>

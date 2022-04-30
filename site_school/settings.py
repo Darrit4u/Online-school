@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'registration.apps.RegistrationConfig',
     'student_area.apps.StudentAreaConfig',
     'tutor_area.apps.TutorAreaConfig',
+    'tests.apps.TestsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

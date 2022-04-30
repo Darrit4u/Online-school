@@ -68,7 +68,8 @@ class ResultAdmin(admin.ModelAdmin):
         'user',
         'test',
         'all_points',
-        'data_created'
+        'data_created',
+        'status_check'
     )
 
 

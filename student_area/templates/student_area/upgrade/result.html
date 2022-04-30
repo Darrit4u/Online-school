@@ -65,6 +65,12 @@
 </div>
 
 <br><br>
+{% if message == 2 %}
+    <div style="margin: 5%; background-color: #CDF1FD; border-radius: 15px;">Проверено</div>
+    <--! файл от куратор -->
+{% elif message == 1 %}
+    <div style="margin: 5%; background-color: #CDF1FD; border-radius: 15px;">На проверке</div>
+{% else %}
 <p style="color: #033C8A; font-weight: bold; font-size: 28px;">Отправить работу над ошибками</p>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
@@ -77,5 +83,6 @@
     </div>
 </form>
 </div>
+{% endif %}
 </body>
 </html>

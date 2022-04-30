@@ -1,0 +1,55 @@
+{% extends 'main_pages/../base.html' %}
+{% load static %}
+
+{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif; margin-left: 3%; margin-top: 3%">вторая часть</h2>{% endblock %}
+{{ error_message }}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/block.css' %}">
+    <div style="margin: 10%">
+    <ul class="navbar-nav">
+    <li class="nav-item">
+        <div class="container-fluid" id="frame" style="background-color: #C0EFFF;">
+            <div class="row justify-content-between">
+                <div class="col justify-content-center" id="text"><a class=" align-self-center" style="margin-left: auto; margin-right: auto" href="/file/ВТОРАЯ ЧАСТЬ 1.1, 1.2, 1.4, 1.5, 1.6, 1.7, 1.17, 1.18.docx">ВТОРАЯ ЧАСТЬ 1.1 1.2 1.4 ... 1.18</a></div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col">
+                    <form method="post" enctype="multipart/form-data">
+                          {% csrf_token %}
+                            <div class="mb-3">
+                              <label for="formFileMultiple" class="form-label"></label>
+                              <input class="form-control" type="file" id="formFileMultiple" name="docfile" multiple>
+                            </div>
+                            <div style="margin-top: 2%; margin-left: 1%; display: inline-block;">
+                                <button type="submit" name="Answer" class="btn-md btn-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Отправить</button>
+                            </div>
+                    </form>
+                </div>
+                <div class="col" id="text" >сдать до 4 мая 23:59 по мск в формате ворд.</div>
+            </div>
+        </div>
+    </li>
+    {% for i in num_lessons %}
+        <li class="nav-item">
+        {% if i <= last_lesson %}
+            <a href="/student_page/upgrade/{{ name_block }}/{{ i }}">
+                <div class="container-fluid" id="frame" style="background-color: #CDF1FD;">
+                    <div class="row justify-content-between">
+                    <div class="col" id="text">{{ i }} день</div>
+                    <div class="col-auto"><img src={% static 'images/Arrow.png' %}></div>
+                    </div>
+                </div>
+            </a>
+        {% else %}
+            <div class="container-fluid" id="frame" style="background-color: #C7DAF5">
+                <div class="row justify-content-between">
+                <div class="col" id="text">{{ i }} день</div>
+                <div class="col-auto"><img src={% static 'images/lock.png' %}></div>
+                </div>
+            </div>
+        {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    </div>
+{% endblock %}

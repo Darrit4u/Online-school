@@ -39,6 +39,10 @@ def upgrade(request):
     return HttpResponseRedirect('/login')
 
 
+def second_part(request, name_block):
+    return render(request, 'student_area/upgrade/second_part.html')
+
+
 def demo(request):
     return render(request, 'student_area/demo.html')
 
@@ -49,24 +53,21 @@ def settings(request):
     return render(request, 'student_area/settings.html')
 
 
-# TODO: предача номера урока через get в url и распаковка в одной функции.
-# TODO: Функция принимает аргумент и рендерит нужный html
-# ! чел не может отправить сразу еще один файл. но если он перезайдет на страницу, то сможет
+# TODO: разбить на несколько функций
 def lesson(request, name_block, num_lesson):
-    message = False
+    message = ''
     u = User.objects.get(username=request.user)
     b = Block.objects.get(name=name_block)
+    num_block = b.num_block
     l = Lesson.objects.get(what_block=b, num=num_lesson)
     test = Test.objects.get(what_lesson=l)
+    recent_res = list(Result.objects.filter(user_id=u.id, test_id=test.id))
     questions = list(test.question_set.all())
     quest_choice = {}
     for question in questions:
         quest_choice[question] = []
         for choice in list(question.choice_set.all()):
             quest_choice[question].append(choice)
-
-    if Result.objects.filter(user=u, test=test).exists():
-        return HttpResponseRedirect('/test/upgrade/{}/{}/result'.format(request.user, test.id))
 
     if request.method == 'POST':
         user_points = 0
@@ -99,7 +100,7 @@ def lesson(request, name_block, num_lesson):
             e.save()
         result.all_points = user_points
         result.save()
-        return HttpResponseRedirect('/test/upgrade/{}/{}/result'.format(request.user, test.id))
+        return HttpResponseRedirect('/test/upgrade/{}'.format(result.id))
 
     form = HomeworkForm()
     return render(request, 'student_area/upgrade/lesson.html', {
@@ -107,24 +108,14 @@ def lesson(request, name_block, num_lesson):
         'form': form,
         'num_lesson': num_lesson,
         'name_block': name_block,
+        'num_block': num_block,
         'video': l.video,  # ссылки на видео дня
         'test': test,  # объект теста урока
         'quest_choice': quest_choice,  # {question: [choices]}
         'questions': questions,
         'num_question': [i for i in range(1, test.num_question+1)],
+        'recent_res': recent_res,
     })
-
-
-def send_file(request):
-    if request.method == 'POST':
-        form = HomeworkForm(request.POST, request.FILES)
-        if form.is_valid():
-            u = User.objects.get(username=request.user)
-            h = Homework(who_send=u, answer=request.FILES['docfile'], date=timezone.now(), num_task=1)
-            h.save()
-            message = True
-    else:
-        form = HomeworkForm()
 
 
 def block(request, name_block):
@@ -145,66 +136,6 @@ def block(request, name_block):
     return HttpResponseRedirect('/login')
 
 
-# def get_question(request, num_test):
-#     questions = list(Question.objects.filter(num_test=num_test))  # список всех вопрос в тесте
-#     if Answer.objects.filter(question=questions[0]).exists():
-#         return render(request, 'student_area/upgrade/result.html', {})
-#     if request.method == 'POST':
-#         user = User.objects.get(username=request.user)
-#         all_points = 0
-#         errors = {}
-#         for question in questions:
-#             choices = request.POST.getlist('choice')
-#             question_points = 0
-#             for choice in choices:
-#                 c = Choice.objects.get(id=int(choice))
-#                 user_answer = Answer(user=user, question=question, choice=c, data_created=timezone.now())
-#                 user_answer.save()
-#                 if c.right_or_not:
-#                     all_points += 1
-#                     question_points += 1
-#             if question_points < question.max_point:
-#                 errors[question.id] = question_points
-#         return render(request, 'student_area/upgrade/result.html', {
-#             'questions': questions,
-#             'all_points': all_points,
-#             'errors': errors
-#         })
-#     return render(request, 'student_area/upgrade/test.html', {'questions': questions})
-
-def get_result(request, user, id_test):
-    if request.user.is_authenticated:
-        u = User.objects.get(username=user)
-        test = Test.objects.get(id=id_test)
-        num_lesson = test.what_lesson.num
-        questions = list(test.question_set.all())
-        quest_choice = {}
-        res = Result.objects.get(user_id=u.id, test_id=test.id)
-        user_choices = EveryQuestionChoice.objects.filter(result_test=res)
-        for question in questions:
-            quest_choice[question] = []
-            for choice in list(question.choice_set.all()):
-                quest_choice[question].append(choice)
-
-        if request.method == 'POST':
-            form = HomeworkForm(request.POST, request.FILES)
-            files = request.FILES.getlist('docfile')
-            if form.is_valid():
-                for f in files:
-                    h = Homework(who_send=u, answer=f, date=timezone.now(), num_task=test.id)
-                    h.save()
-        return render(request, 'student_area/upgrade/result.html', {
-            'user_choices': user_choices,
-            'test': test,  # объект теста урока
-            'u': u,
-            'res': res,
-            'video': test.what_lesson.video,
-            'num_lesson': num_lesson,
-            'quest_choice': quest_choice,  # {question: [choices]}
-            'questions': questions,
-            'num_question': [i for i in range(1, test.num_question+1)],
-        })
-    return HttpResponseRedirect('/login')
 
 # class GetQuestion(GenericAPIView):
 #     permission_classes = (IsAuthenticated,)

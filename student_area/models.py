@@ -3,20 +3,11 @@ from django.contrib.auth.models import User
 import os
 
 
-# TODO: Возможно, добавить метод сортировки по нику отправляющего и дате
-class Homework(models.Model):
-    who_send = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    num_task = models.IntegerField(default=0)  # id теста, в ответ на который были присланы файлы
-    answer = models.FileField(upload_to='')
-    date = models.DateField()
-
-    def __str__(self):
-        return self.who_send.username
-
-
 class Block(models.Model):
+    num_block = models.IntegerField(default=0)  # номер блока
     num_lessons = models.IntegerField()
     name = models.CharField(max_length=200)
+    readable_name = models.CharField(max_length=500)
     visible = models.BooleanField(default=False)
 
     def __str__(self):
@@ -26,7 +17,7 @@ class Block(models.Model):
 class Lesson(models.Model):
     what_block = models.ForeignKey(Block, on_delete=models.CASCADE)
     num = models.IntegerField(default=0)
-    video = models.CharField(max_length=200)
+    video = models.CharField(max_length=1000)
 
     def __str__(self):
         return "{} {}".format(self.what_block, self.num)
@@ -35,8 +26,8 @@ class Lesson(models.Model):
 class Test(models.Model):
     what_block = models.ForeignKey(Block, on_delete=models.CASCADE)
     what_lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE)
-    num = models.IntegerField(default=0)
-    num_question = models.IntegerField(default=0)
+    num = models.IntegerField(default=0)  # номер теста
+    num_question = models.IntegerField(default=0)  # кол-во вопросов
     theme = models.CharField(max_length=500)
 
     def __str__(self):
@@ -68,9 +59,10 @@ class Choice(models.Model):
 
 class Result(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    test = models.OneToOneField(Test, on_delete=models.CASCADE)
+    test = models.ForeignKey(Test, on_delete=models.CASCADE)
     all_points = models.IntegerField()
     data_created = models.DateTimeField()
+    status_check = models.IntegerField(default=0)  # статус проверки куратором
 
     def __str__(self):
         return "{} {} {}".format(self.user, self.test, self.all_points)
@@ -91,4 +83,16 @@ class Answer(models.Model):
 
     def __str__(self):
         return "{} отправил ответ на {}".format(self.user, self.question)
+
+
+# TODO: Возможно, добавить метод сортировки по нику отправляющего и дате
+class Homework(models.Model):
+    who_send = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    num_task = models.IntegerField(default=0)  # id теста, в ответ на который были присланы файлы
+    result_obj = models.ForeignKey(Result, on_delete=models.CASCADE)  # по какому результату рно
+    answer = models.FileField(upload_to='')
+    date = models.DateField()
+
+    def __str__(self):
+        return self.who_send.username
 

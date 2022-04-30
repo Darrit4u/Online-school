@@ -34,13 +34,36 @@ def demo(request):
 
 
 def student(request, id_student):
-    h = list(Homework.objects.filter(who_send=User.objects.get(id=id_student)))
-    task = set([Test.objects.get(id=t.num_task) for t in h])
-    return render(request, 'tutor_area/student.html', {'homework': h, 'task': task})
+    if request.method == 'POST':
+        id_accept_result = list(dict(request.POST))[1]
+        accept_result = Result.objects.get(id=id_accept_result)
+        accept_result.status_check = 2
+        accept_result.save()
+
+    h = (Homework.objects.filter(who_send=User.objects.get(id=id_student)))
+    s = Student.objects.get(user=User.objects.get(id=id_student))
+    task = set([Test.objects.get(id=t.num_task) for t in list(h)])
+
+    result_all = list(set([i.result_obj for i in h]))
+    context = {}
+    for home_id in range(len(result_all)):
+        homework_with_one_home_id = h.filter(result_obj=result_all[home_id])
+        context[homework_with_one_home_id[0].result_obj] = ([i.answer for i in list(homework_with_one_home_id)])
+
+    return render(request, 'tutor_area/student.html', {
+        'homework': list(h),
+        'task': task,
+        'first_name_student': s.first_name,
+        'last_name_student': s.last_name,
+        'context': context
+    })
+
+# [ [file in homework with first_id_result], second_id_result ]
 
 
 def download_file(request, path):
     file_path = os.path.join(settings.MEDIA_ROOT, path)
+    response = HttpResponseRedirect('/login')
     if os.path.exists(file_path):
         with open(file_path, 'rb') as fh:
             response = HttpResponse(content_type="application/octet-stream")

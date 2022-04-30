@@ -1,6 +1,7 @@
 #login_bg {
     display: inline-block;
-    width: 40% !important;
+    width: 100% !important;
+    max-width: 550px;
     background: rgba(156, 228, 252, 0.5);
     box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25);
     border-radius: 15px;
@@ -12,7 +13,6 @@ input[type='text']{
     font-weight: lighter;
     color: #033C8A;
     opacity: 60%;
-    text-transform: lowercase;
 }
 input[type='password']{
     font-family: 'Montserrat', sans-serif;
@@ -20,7 +20,6 @@ input[type='password']{
     font-weight: lighter;
     color: #033C8A;
     opacity: 60%;
-    text-transform: lowercase;
 }
 a {
     text-decoration: none; /* Убираем подчёркивание */
