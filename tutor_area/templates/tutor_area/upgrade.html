@@ -1,0 +1,30 @@
+{% extends 'main_pages/../base_tutor.html' %}
+{% load static %}
+
+{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">upgrade</h2>{% endblock %}
+{{ error_message }}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/block.css' %}">
+    <div style="margin: 5%">
+    <div class="row justify-content-md-center">
+        <div class="col text-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 35px; margin-bottom: 3%">ученики</div>
+    </div>
+    <div class="row justify-content-md-center">
+    <ul class="navbar-nav">
+    {% for i in students %}
+        <li class="nav-item">
+            <a href="/tutor_page/upgrade/{{ i.user.id }}/">
+                <div class="container-fluid" id="frame" style="background-color: #CDF1FD;">
+                    <div class="row justify-content-between">
+                    <div class="col" id="text">{{ i.first_name }} {{ i.last_name }}</div>
+                    <div class="col-auto"><img src={% static 'images/Arrow.png' %}></div>
+                    </div>
+                </div>
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+    </div>
+    </div>
+    </div>
+{% endblock %}

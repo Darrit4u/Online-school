@@ -35,18 +35,20 @@ class LessonAdmin(admin.ModelAdmin):
 class QuestionAdmin(admin.ModelAdmin):
     list_display = (
         'what_test',
-        'num_task',
+        'number',
         'text',
         'max_point',
-        'visible'
+        'visible',
+        'right_answer'
     )
+    list_filter = ('what_test', 'number')
 
 
 class ChoiceAdmin(admin.ModelAdmin):
     list_display = (
         'question',
         'text',
-        'right_or_not'
+        'number'
     )
     list_filter = ('question',)
 
@@ -56,9 +58,18 @@ class AnswerAdmin(admin.ModelAdmin):
         'user',
         'question',
         'choice',
-        'data_created',
+        # 'result'
     )
     list_filter = ('user',)
+
+
+class ResultAdmin(admin.ModelAdmin):
+    list_display = (
+        'user',
+        'test',
+        'all_points',
+        'data_created'
+    )
 
 
 admin.site.register(Question, QuestionAdmin)
@@ -67,3 +78,4 @@ admin.site.register(Answer, AnswerAdmin)
 admin.site.register(Block, BlockAdmin)
 admin.site.register(Test, TestAdmin)
 admin.site.register(Lesson, LessonAdmin)
+admin.site.register(Result, ResultAdmin)

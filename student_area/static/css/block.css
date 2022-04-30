@@ -4,6 +4,9 @@
     margin-bottom: 5%;
     padding: 2%;
 }
+#surprise::after {
+    content: '\2757';
+}
 #text {
     font-family: 'Montserrat', sans-serif;
     font-style: normal;

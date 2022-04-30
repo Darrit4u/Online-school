@@ -6,7 +6,7 @@ import os
 # TODO: Возможно, добавить метод сортировки по нику отправляющего и дате
 class Homework(models.Model):
     who_send = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    num_task = models.IntegerField(default=0)
+    num_task = models.IntegerField(default=0)  # id теста, в ответ на который были присланы файлы
     answer = models.FileField(upload_to='')
     date = models.DateField()
 
@@ -45,38 +45,50 @@ class Test(models.Model):
 
 class Question(models.Model):
     what_test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    num_task = models.IntegerField(default=0)
     text = models.TextField()
     max_point = models.IntegerField(default=1)
+    number = models.IntegerField(default=0)
     visible = models.BooleanField(default=False)
+    right_answer = models.CharField(max_length=200, default='')
 
     def __str__(self):
-        return "Тест {} вопрос {}".format(self.what_test.theme, self.num_task)
+        return "Тест {} вопрос {}".format(self.what_test.theme, self.number)
 
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.TextField()
-    lock_other = models.BooleanField(default=False)
-    right_or_not = models.BooleanField(default=None)
+    # lock_other = models.BooleanField(default=False)
+    # right_or_not = models.BooleanField(default=None)
+    number = models.IntegerField(default=0)
 
     def __str__(self):
         return self.text
 
 
-# Ответ пользователя (каждый выбор = одной модели)
+class Result(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    test = models.OneToOneField(Test, on_delete=models.CASCADE)
+    all_points = models.IntegerField()
+    data_created = models.DateTimeField()
+
+    def __str__(self):
+        return "{} {} {}".format(self.user, self.test, self.all_points)
+
+
+class EveryQuestionChoice(models.Model):
+    result_test = models.ForeignKey(Result, on_delete=models.CASCADE)
+    point = models.IntegerField(default=-1)
+    num_question = models.IntegerField(default=0)
+
+
+# Ответ пользователя
 class Answer(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
-    choice = models.ForeignKey(Choice, on_delete=models.DO_NOTHING)
-    data_created = models.DateTimeField(auto_now_add=True)
+    choice = models.CharField(max_length=200)
+    result = models.ForeignKey(Result, on_delete=models.DO_NOTHING, default=0)
 
     def __str__(self):
-        return self.choice.text
+        return "{} отправил ответ на {}".format(self.user, self.question)
 
-
-# class Result(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-#     question = models.ForeignKey(Question, on_delete=models.DO_NOTHING)
-#     all_points = models.IntegerField()
-#     answers = models.ForeignKey(Answer, on_delete=models.DO_NOTHING)

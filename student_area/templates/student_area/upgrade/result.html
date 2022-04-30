@@ -3,27 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    {% load static %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <style>
+    #main {
+        margin: 2% 5%;
+    }
+    #arrow {
+        margin-top: 2%;
+        transform: rotate(180deg);
+    }
+    #video {
+        width: 100%;
+        margin-top: 2%;
+    }
+    a {
+        text-decoration: none;
+    }
+</style>
+
 </head>
 <body>
-Result
+<div id="main">
+<h2 style="color: #033C8A; font-weight: bold; font-size: 35px;">день №{{ num_lesson }}. результаты</h2>
+<a href="/student_page/upgrade/{{ name_block }}"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a>
 
-<div align="center"><h1>{{ question.question_text }}</h1></div>
+<div id="video" class="d-flex justify-content-center">
+    <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<div style="margin-top: 3%">
+<a href="/file/{{ file.answer.name }}" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку</a>
+</div>
+    <div id="test">
 
-Вы набрали {{ all_points }} баллов/балла.
-
-{% for question in questions %}
-  <div>{{ question.text }}</div>
-  {% for choice in question.choice_set.all %}
-    <div class="container" align="center" style="width:400px">
-    {% if question.id in errors%}
-        <label for="choice{{ forloop.counter }}" class="form-control" ><div align="left" style="background-color: red">{{ choice.text }}</div></label>
-    {% else %}
-        <label for="choice{{ forloop.counter }}" class="form-control"><div align="left"  style="background-color: green">{{ choice.text }}</div></label>
-    {% endif %}
-        <br>
+{% for q, choices in quest_choice.items %}
+    {% for user_choice in user_choices %}
+        {% if user_choice.num_question == q.number %}
+    <div class="container" style="margin-top: 5%; background-color: #CDF1FD; border-radius: 15px;">
+        <div class="row" id="question" style="margin-left: 2%">
+        <div class="col-1" id="num" style="font-family: 'Montserrat', sans-serif; font-weight: 700; color:#033C8A; font-size:35px; text-align: center; margin: 2% 0">
+                <div class="row">{{ q.number }}</div>
+                <div class="row justify-content-center" style="font-weight: 500!important; margin-top: 60%!important; background-color: #FAFEFA; border-radius: 15px;">{{ user_choice.point }}/{{ q.max_point }}</div>
+        </div>
+        <div class="col-11" id="text" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px; margin: 2% 0">
+            {{ q.text }}<br><br>
+            {% for choice in choices %}
+                {{ choice.number }}. {{ choice.text }}<br>
+            {% endfor %}
+        </div>
+        </div>
     </div>
-  {% endfor %}
+    {% endif %}
+    {% endfor %}
 {% endfor %}
-<br>
+</div>
+
+<br><br>
+<p style="color: #033C8A; font-weight: bold; font-size: 28px;">Отправить работу над ошибками</p>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+    <div class="mb-3">
+      <label for="formFileMultiple" class="form-label"></label>
+      <input class="form-control" type="file" id="formFileMultiple" name="docfile" multiple>
+    </div>
+    <p><div style="margin-top: 2%; margin-left: 1%; display: inline-block; width: 15%">
+    <button type="submit" name="Answer" class="btn btn-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Отправить</button>
+    </div>
+</form>
+</div>
 </body>
 </html>

@@ -1,0 +1,44 @@
+{% extends 'main_pages/../base_tutor.html' %}
+{% load static %}
+
+{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">upgrade</h2>{% endblock %}
+{{ error_message }}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/block.css' %}">
+    <div style="margin: 5%">
+    <div class="row justify-content-md-center">
+        <div class="col text-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 35px; margin-bottom: 3%">ученики</div>
+    </div>
+    <div class="row justify-content-md-center">
+    <ul class="navbar-nav">
+    {% for t in task %}
+        <li class="nav-item">
+            <div class="container-fluid" id="frame" style="background-color: #CDF1FD;">
+                <div class="row justify-content-between" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 28px; text-align: center; margin-bottom: 2%; margin-left: 2%"> Блок {{ t.what_block.name }}. День {{ t.what_lesson.num }}</div>
+                {% for file in homework %}
+                    {% if file.num_task == t.id %}
+                        <div class="col"><a href="/file/{{ file.answer.name }}">{{ file.answer.name }} </a><br></div>
+                        <div class="col">
+                        <form method="post" enctype="multipart/form-data">
+                          {% csrf_token %}
+                            <div class="mb-3">
+                              <label for="formFileMultiple" class="form-label"></label>
+                              <input class="form-control" type="file" id="formFileMultiple" name="docfile" multiple>
+                            </div>
+                            <p><div style="margin-top: 2%; margin-left: 1%; display: inline-block; width: 15%">
+                            <button type="submit" name="Answer" class="btn btn-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Отправить</button>
+                            </div>
+                        </form>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </li>
+    {% endfor %}
+
+
+    </ul>
+    </div>
+    </div>
+    </div>
+{% endblock %}

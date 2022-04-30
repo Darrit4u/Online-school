@@ -5,7 +5,7 @@ import os
 from django.contrib.auth.models import User
 
 from registration.models import Student, Tutor
-from student_area.models import Homework
+from student_area.models import *
 from site_school import settings
 
 
@@ -17,7 +17,7 @@ def home(request):
     return HttpResponseRedirect('/login')
 
 
-def course_1(request):
+def upgrade(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('/login')
     u = User.objects.get(username=request.user)
@@ -26,12 +26,17 @@ def course_1(request):
         return HttpResponseRedirect('/login')
 
     students = list(Student.objects.filter(tutor=t))
-    return render(request, 'tutor_area/course_1.html', {'students': students})
+    return render(request, 'tutor_area/upgrade.html', {'students': students})
+
+
+def demo(request):
+    return render(request, 'student_area/demo.html')
 
 
 def student(request, id_student):
-    h = list(Homework.objects.filter(who_send=User.objects.get(username=id_student)))
-    return render(request, 'tutor_area/s1.html', {'homework': h})
+    h = list(Homework.objects.filter(who_send=User.objects.get(id=id_student)))
+    task = set([Test.objects.get(id=t.num_task) for t in h])
+    return render(request, 'tutor_area/student.html', {'homework': h, 'task': task})
 
 
 def download_file(request, path):

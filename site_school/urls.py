@@ -16,6 +16,7 @@ Including another URLconf
 from django.urls import include, re_path
 
 urlpatterns = [
+    re_path(r'^test', include('student_area.urls')),
     re_path(r'^student_page', include('student_area.urls')),
     re_path(r'^tutor_page', include('tutor_area.urls')),
     re_path(r'^file', include('tutor_area.urls')),
