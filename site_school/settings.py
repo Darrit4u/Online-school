@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-n+6n7p+j9^&x^x%2mw35y3&4_fmssvvb$9ge=@+1y64h)91nld
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['obshagana100.ru', 'www.obshagana100.ru']
 
 
 # Application definition
@@ -81,8 +81,11 @@ WSGI_APPLICATION = 'site_school.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'u1666879_user',
+        'USER': 'u1666879',
+        'PASSWORD': 'Qfl4M5EsBtX14wQh',
+        'HOST': 'localhost',
     }
 }
 
@@ -121,7 +124,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT='static/'
 
 MEDIA_URL = '/file/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'file')
