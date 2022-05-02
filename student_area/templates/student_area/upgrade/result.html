@@ -34,40 +34,55 @@
 <h2 style="color: #033C8A; font-weight: bold; font-size: 35px;">день №{{ num_lesson }}. результаты</h2>
 <a href="/student_page/upgrade/{{ name_block }}"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a>
 
+{% for video in videos %}
 <div id="video" class="d-flex justify-content-center">
     <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
+{% endfor %}
 <div style="margin-top: 3%">
-<a href="/file/{{ file.answer.name }}" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку</a>
+<a href="/file/{{ num_block }}.{{ num_lesson }} .pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку</a>
 </div>
     <div id="test">
-
-{% for q, choices in quest_choice.items %}
+{% for q, choices_info in quest_choice.items %}
     {% for user_choice in user_choices %}
         {% if user_choice.num_question == q.number %}
     <div class="container" style="margin-top: 5%; background-color: #CDF1FD; border-radius: 15px;">
-        <div class="row" id="question" style="margin-left: 2%">
-        <div class="col-1" id="num" style="font-family: 'Montserrat', sans-serif; font-weight: 700; color:#033C8A; font-size:35px; text-align: center; margin: 2% 0">
-                <div class="row">{{ q.number }}</div>
-                <div class="row justify-content-center" style="font-weight: 500!important; margin-top: 60%!important; background-color: #FAFEFA; border-radius: 15px;">{{ user_choice.point }}/{{ q.max_point }}</div>
+        <div class="row" id="question">
+        <div class="col-1" id="num" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:35px; text-align: center; margin: 2% 0">
+            <div class="row" style="margin-left: 5%">{{ q.number }}</div>
+            <div class="row justify-content-center d-flex align-self-center" style="font-weight: 500!important; margin-top: 60%!important; background-color: #FAFEFA; border-radius: 15px; margin-left: 2%; margin-bottom: 2%; margin-right: 2%">{{ user_choice.point }}/{{ q.max_point }}</div>
         </div>
         <div class="col-11" id="text" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px; margin: 2% 0">
             {{ q.text }}<br><br>
-            {% for choice in choices %}
-                {{ choice.number }}. {{ choice.text }}<br>
+            {% for info, choices in choices_info.items %}
+                {% if info == 'photo' %}
+                    <img src="/file/{{ choices }}" alt="Фото к заданию">
+                {% else %}
+                    {% for choice in choices %}
+                        {{ choice }}<br>
+                    {% endfor %}
+                {% endif %}
+                {{ choice }}<br>
             {% endfor %}
         </div>
         </div>
+        <div class="row">
+        <div class="col">
+            <div class="mb-3" style="margin-left: 5%">
+                <div style="font-size: 24px; font-family: 'Montserrat', sans-serif; font-weight: 500;">Правильный ответ: {{ q.right_answer }}</div>
+                <div style="font-size: 24px; font-family: 'Montserrat', sans-serif; font-weight: 500;">Ваш ответ: {{ user_choice.user_answer }}</div>
+            </div>
+        </div>
     </div>
-    {% endif %}
-    {% endfor %}
+    </div>
+{% endif %}
+{% endfor %}
 {% endfor %}
 </div>
 
 <br><br>
 {% if message == 2 %}
     <div style="margin: 5%; background-color: #CDF1FD; border-radius: 15px;">Проверено</div>
-    <--! файл от куратор -->
 {% elif message == 1 %}
     <div style="margin: 5%; background-color: #CDF1FD; border-radius: 15px;">На проверке</div>
 {% else %}

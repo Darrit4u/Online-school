@@ -48,7 +48,7 @@ class ChoiceAdmin(admin.ModelAdmin):
     list_display = (
         'question',
         'text',
-        'number'
+        'photo_or_not'
     )
     list_filter = ('question',)
 
@@ -73,6 +73,35 @@ class ResultAdmin(admin.ModelAdmin):
     )
 
 
+class EveryQuestionChoiceAdmin(admin.ModelAdmin):
+    list_display = (
+        'result_test',
+        'point',
+        'num_question',
+        'user_answer'
+    )
+
+
+class SecondPartAdmin(admin.ModelAdmin):
+    list_display = (
+        'theme',
+        'path_to_task',
+        'path_to_key',
+        'date_open',
+        'date_up_key'
+    )
+
+
+class HomeworkSecondPartAdmin(admin.ModelAdmin):
+    list_display = (
+        'who_send',
+        'second_part',
+        'answer',
+        'date',
+        'status_check'
+    )
+
+
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Choice, ChoiceAdmin)
 admin.site.register(Answer, AnswerAdmin)
@@ -80,3 +109,6 @@ admin.site.register(Block, BlockAdmin)
 admin.site.register(Test, TestAdmin)
 admin.site.register(Lesson, LessonAdmin)
 admin.site.register(Result, ResultAdmin)
+admin.site.register(EveryQuestionChoice, EveryQuestionChoiceAdmin)
+admin.site.register(SecondPart, SecondPartAdmin)
+admin.site.register(HomeworkSecondPart, HomeworkSecondPartAdmin)

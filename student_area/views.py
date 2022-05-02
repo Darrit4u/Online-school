@@ -10,8 +10,9 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from .models import *
-from .forms import HomeworkForm
+from .forms import *
 from registration.models import Student, Tutor
+from tutor_area.models import *
 from django.contrib.auth.models import User
 
 NAME_BLOCK_UPGRADE = {
@@ -40,11 +41,37 @@ def upgrade(request):
 
 
 def second_part(request, name_block):
-    return render(request, 'student_area/upgrade/second_part.html')
+    if request.user.is_authenticated:
+        u = User.objects.get(username=request.user)
+        h_s_p = HomeworkSecondPart.objects.get(who_send=u)
+        tutor_answer = ''
+        if h_s_p:
+            send = True
+            if h_s_p.status_check == 2:
+                tutor_answer = CheckResult.objects.get(id_h_second_part=h_s_p.id)
+        else:
+            send = False
+
+        if request.method == 'POST':
+            s_p = SecondPart.objects.get(id=int(list(request.POST.keys())[1]))
+            form = HomeworkSecondPartForm(request.POST, request.FILES)
+            files = request.FILES.getlist('docfile')
+            if form.is_valid():
+                for f in files:
+                    h = HomeworkSecondPart(who_send=u, second_part=s_p, answer=f, date=timezone.now(), status_check=1)
+                    h.save()
+                send = True
+        return render(request, 'student_area/upgrade/second_part.html', {
+            'name_block': name_block,
+            'send': send,
+            'h_s_p': h_s_p,
+            'tutor_answer': tutor_answer,
+        })
+    return HttpResponseRedirect('/login')
 
 
-def demo(request):
-    return render(request, 'student_area/demo.html')
+def intro(request):
+    return render(request, 'student_area/intro.html')
 
 
 def settings(request):
@@ -57,6 +84,7 @@ def settings(request):
 def lesson(request, name_block, num_lesson):
     message = ''
     u = User.objects.get(username=request.user)
+    s = Student.objects.get(user=u)
     b = Block.objects.get(name=name_block)
     num_block = b.num_block
     l = Lesson.objects.get(what_block=b, num=num_lesson)
@@ -65,56 +93,78 @@ def lesson(request, name_block, num_lesson):
     questions = list(test.question_set.all())
     quest_choice = {}
     for question in questions:
-        quest_choice[question] = []
-        for choice in list(question.choice_set.all()):
-            quest_choice[question].append(choice)
+        choices = Choice.objects.get(question=question).text.splitlines()
+        if len(choices) == 1:
+            quest_choice[question] = {'photo': choices[0]}
+        else:
+            for i in range(len(choices)):
+                choices[i] = "{}. {}".format(i + 1, choices[i])
+            quest_choice[question] = {'text': choices}
+
+    videos = l.video.split()
 
     if request.method == 'POST':
-        user_points = 0
-        result = Result(user=u, test=test, all_points=user_points, data_created=datetime.datetime.now())
-        result.save()
-        i = 0
-        for answer in list(request.POST.keys())[1:-1]:
-            user_point = 0
-            q = questions[i]
-            user_answer = request.POST[answer]
-            a = Answer(user=u, question=q, choice=user_answer, result=result)
-            a.save()
-            i += 1
-            # Подсчет баллов
-            answer_int = sorted([int(user_answer[i]) for i in range(len(user_answer))])
-            right_answer_int = sorted([int(q.right_answer[i]) for i in range(len(q.right_answer))])
-            right_point = 0
-            for k in answer_int:
-                if k in right_answer_int:
-                    right_point += 1
-
-            if right_point == len(right_answer_int):
-                user_point = q.max_point
-            elif right_point == len(right_answer_int) - 1:
-                user_point = q.max_point - 1
-            else:
+        if request.POST.get('end_lesson') == '':
+            s.last_lesson_upgrade += 1
+            s.save()
+        else:
+            user_points = 0
+            result = Result(user=u, test=test, all_points=user_points, data_created=datetime.datetime.now())
+            result.save()
+            i = 0
+            for answer in list(request.POST.keys())[1:-1]:
                 user_point = 0
-            user_points += user_point
-            e = EveryQuestionChoice(result_test=result, point=user_point, num_question=i)
-            e.save()
-        result.all_points = user_points
-        result.save()
-        return HttpResponseRedirect('/test/upgrade/{}'.format(result.id))
+                q = questions[i]
+                user_answer = request.POST[answer]
+                a = Answer(user=u, question=q, choice=user_answer, result=result)
+                a.save()
+                i += 1
+
+                question = Question.objects.get(what_test=Test.objects.get(num=num_lesson), number=int(answer))
+                if Choice.objects.get(question=question).photo_or_not:
+                    answer_int = [int(user_answer[i]) for i in range(len(user_answer))]
+                    right_answer_int = [int(q.right_answer[i]) for i in range(len(q.right_answer))]
+                else:
+                    answer_int = sorted([int(user_answer[i]) for i in range(len(user_answer))])
+                    right_answer_int = sorted([int(q.right_answer[i]) for i in range(len(q.right_answer))])
+
+                # Подсчет баллов
+                right_point = 0
+                for k in right_answer_int:
+                    if k in answer_int:
+                        right_point += 1
+
+                if right_point == len(right_answer_int) and right_point == len(answer_int):  # все верно
+                    user_point = q.max_point
+                elif right_point == len(right_answer_int) - 1 and len(answer_int) == len(right_answer_int):  # один неправильный
+                    user_point = q.max_point - 1
+                elif right_point == len(right_answer_int) - 1 and len(answer_int) == len(right_answer_int) - 1: # одного не хватает
+                    user_point = q.max_point - 1
+                elif right_point == len(right_answer_int) and len(answer_int) == len(right_answer_int) + 1:  # один лишний
+                    user_point = q.max_point - 1
+                else:
+                    user_point = 0
+                user_points += user_point
+                e = EveryQuestionChoice(result_test=result, point=user_point, num_question=i, user_answer=user_answer   )
+                e.save()
+            result.all_points = user_points
+            result.save()
+            return HttpResponseRedirect('/test/upgrade/{}'.format(result.id))
 
     form = HomeworkForm()
     return render(request, 'student_area/upgrade/lesson.html', {
         'message': message,
         'form': form,
-        'num_lesson': num_lesson,
+        'num_lesson': int(num_lesson),
         'name_block': name_block,
         'num_block': num_block,
-        'video': l.video,  # ссылки на видео дня
+        'videos': videos,  # ссылки на видео дня (список)
         'test': test,  # объект теста урока
         'quest_choice': quest_choice,  # {question: [choices]}
         'questions': questions,
-        'num_question': [i for i in range(1, test.num_question+1)],
+        'num_question': [i for i in range(1, test.num_question + 1)],
         'recent_res': recent_res,
+        'student': s,
     })
 
 
@@ -124,18 +174,19 @@ def block(request, name_block):
         if Student.objects.filter(user=u).exists():
             if Student.objects.get(user=u).upgrade:
                 b = Block.objects.get(name=name_block)
+                lessons = list(Lesson.objects.filter(what_block=b))
                 last_lesson = Student.objects.get(user=u).last_lesson_upgrade
-                num_lessons = [i for i in range(1, b.num_lessons+1)]
+                num_lessons = [i for i in range(1, b.num_lessons + 1)]
+                print(lessons)
                 return render(request, 'student_area/upgrade/block.html', {
                     'title': NAME_BLOCK_UPGRADE[name_block],
                     'num_lessons': num_lessons,
                     'name_block': name_block,
-                    'last_lesson': last_lesson
+                    'last_lesson': last_lesson,
+                    'lessons': lessons,
                 })
             return HttpResponseRedirect('/student_page')
     return HttpResponseRedirect('/login')
-
-
 
 # class GetQuestion(GenericAPIView):
 #     permission_classes = (IsAuthenticated,)

@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 from registration.models import Student, Tutor
 from student_area.models import *
+from .models import *
 from site_school import settings
 
 
@@ -30,17 +31,34 @@ def upgrade(request):
 
 
 def demo(request):
-    return render(request, 'student_area/demo.html')
+    return render(request, 'student_area/intro.html')
 
 
 def student(request, id_student):
+    u = User.objects.get(id=id_student)
     if request.method == 'POST':
-        id_accept_result = list(dict(request.POST))[1]
-        accept_result = Result.objects.get(id=id_accept_result)
-        accept_result.status_check = 2
-        accept_result.save()
+        if request.FILES.get('docfile'):
+            files = request.FILES.getlist('docfile')
+            h = list(dict(request.POST))[1]
+            h = HomeworkSecondPart.objects.get(id=h)
+            for f in files:
+                tutor_answer = CheckResult(id_student=u, id_h_second_part=h.id, file_answer=f)
+                tutor_answer.save()
+                h.status_check = 2
+                h.save()
+        else:
+            id_accept_result = list(dict(request.POST))[1]
+            accept_result = Result.objects.get(id=id_accept_result)
+            accept_result.status_check = 2
+            accept_result.save()
 
-    h = (Homework.objects.filter(who_send=User.objects.get(id=id_student)))
+    home_sec_part = HomeworkSecondPart.objects.filter(who_send=u)
+    context_for_sec_part = {}
+    for i in range(len(home_sec_part)):
+        h = home_sec_part[i]
+        context_for_sec_part[h] = h.second_part.theme
+
+    h = Homework.objects.filter(who_send=User.objects.get(id=id_student))
     s = Student.objects.get(user=User.objects.get(id=id_student))
     task = set([Test.objects.get(id=t.num_task) for t in list(h)])
 
@@ -55,7 +73,8 @@ def student(request, id_student):
         'task': task,
         'first_name_student': s.first_name,
         'last_name_student': s.last_name,
-        'context': context
+        'context': context,
+        'h_sec_p': context_for_sec_part,
     })
 
 # [ [file in homework with first_id_result], second_id_result ]

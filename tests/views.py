@@ -14,13 +14,18 @@ def get_result(request, id_result):
         u = User.objects.get(id=res.user_id)
         test = Test.objects.get(id=res.test_id)
         num_lesson = test.what_lesson.num
+        name_block = test.what_block.name
         questions = list(test.question_set.all())
         quest_choice = {}
         user_choices = EveryQuestionChoice.objects.filter(result_test=res)
         for question in questions:
-            quest_choice[question] = []
-            for choice in list(question.choice_set.all()):
-                quest_choice[question].append(choice)
+            choices = Choice.objects.get(question=question).text.splitlines()
+            if len(choices) == 1:
+                quest_choice[question] = {'photo': choices[0]}
+            else:
+                for i in range(len(choices)):
+                    choices[i] = "{}. {}".format(i + 1, choices[i])
+                quest_choice[question] = {'text': choices}
 
         if request.method == 'POST':
             form = HomeworkForm(request.POST, request.FILES)
@@ -37,8 +42,10 @@ def get_result(request, id_result):
             'test': test,  # объект теста урока
             'u': u,
             'res': res,
-            'video': test.what_lesson.video,
+            'videos': test.what_lesson.video.split(),
             'num_lesson': num_lesson,
+            'num_block': test.what_block.num_block,
+            'name_block': name_block,
             'quest_choice': quest_choice,  # {question: [choices]}
             'questions': questions,
             'num_question': [i for i in range(1, test.num_question+1)],

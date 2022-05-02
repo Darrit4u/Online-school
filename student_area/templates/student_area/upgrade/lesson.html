@@ -33,21 +33,31 @@
 <div id="main">
 <h2 style="color: #033C8A; font-weight: bold; font-size: 35px;">задание №{{ num_lesson }}</h2>
 <a href="/student_page/upgrade/{{ name_block }}"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a>
+
+{% for video in videos %}
 <div id="video" class="d-flex justify-content-center">
     <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
+{% endfor %}
 <a href="/file/{{ num_block }}.{{ num_lesson }} .pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку</a>
 <div id="test">
 <form method="post">
 {% csrf_token %}
-{% for q, choices in quest_choice.items %}
+{% for q, choices_info in quest_choice.items %}
     <div class="container" style="margin-top: 5%; background-color: #CDF1FD; border-radius: 15px;">
         <div class="row" id="question">
         <div class="col-1" id="num" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:35px; text-align: center; margin: 2% 0">{{ q.number }}</div>
         <div class="col-11" id="text" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px; margin: 2% 0">
             {{ q.text }}<br><br>
-            {% for choice in choices %}
-                {{ choice.number }}. {{ choice.text }}<br>
+            {% for info, choices in choices_info.items %}
+                {% if info == 'photo' %}
+                    <img src="/file/{{ choices }}" alt="Фото к заданию">
+                {% else %}
+                    {% for choice in choices %}
+                        {{ choice }}<br>
+                    {% endfor %}
+                {% endif %}
+                {{ choice }}<br>
             {% endfor %}
         </div>
         </div>
@@ -55,7 +65,7 @@
         <div class="col">
             <div class="mb-3">
                 <label for="Answer" class="form-label">
-                <input type="text" class="form-control" name="Answer{{ forloop.counter }}" placeholder="Ответ" style="background: #CDF1FD;border: 3px solid #94B7F0; box-sizing: border-box;border-radius: 15px;width: 60%;margin-left: 2%;">
+                <input type="text" class="form-control" name="{{ forloop.counter }}" placeholder="Ответ" style="background: #CDF1FD;border: 3px solid #94B7F0; box-sizing: border-box;border-radius: 15px;width: 60%;margin-left: 2%;">
                 </label>
             </div>
         </div>
@@ -64,33 +74,47 @@
 {% endfor %}
 </div>
 
-
+<div class="row">
+<div class="col">
 <form method="post">
 {% csrf_token %}
-<div style="margin-top: 2%; margin-left: 1%; display: inline-block; width: 15%">
-<button type="submit" name="Answer" class="btn btn-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Отправить</button>
+<div style="margin-top: 2%; margin-left: 1%; display: inline-block; width: 40%">
+<button type="submit" name="Answer" class="btn btn-primary" style="border-radius: 15px; width: 100%; font-size: 24px;">Отправить</button>
 </div>
 </form>
 </div>
-
-<div>
     {% if recent_res %}
-        <div id="text">Предыдущие результаты:</div>
-        <ul>
+        <div class="col d-flex justify-content-end">
+        <form method="post" enctype="multipart/form-data">
+                              {% csrf_token %}
+                                <div style="margin-top: 2%; margin-left: 1%; display: inline-block;">
+                                <a href="/student_page/upgrade/{{ name_block }}">
+                                    {% if num_lesson == student.last_lesson_upgrade %}
+                                        <button type="submit" name="end_lesson" class="btn-md btn-outline-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Завершить урок</button>
+                                    {% else %}
+                                        <button type="submit" name="end_lesson" class="btn-md btn-outline-primary" style="border-radius: 15px; width: 100%; font-size: 24px" disabled>Урок завершен</button>
+                                    {% endif %}
+                                </a>
+                                </div>
+                            </form>
+        </div></div>
+        <div style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:35px; margin-top: 5%">Предыдущие результаты:</div>
+
             {% for res in recent_res %}
-                <li>
-                    <a href="/test/upgrade/{{ res.id }}">Тест за {{ res.data_created }}. Кол-во баллов {{ res.all_points }}. Статус:
+                <div class="row" style="border-bottom: 2px solid #C0C0C0; padding: 1%">
+                    <div class="col"><a href="/test/upgrade/{{ res.id }}">Тест за {{ res.data_created }}.</a></div>
+                        <div class="col">Кол-во баллов {{ res.all_points }}.</div>
+                        <div class="col">Статус:
                     {% if res.status_check == 0 %}
                         РНО не отправлено
                     {% elif res.status_check == 1 %}
                         на проверке
                     {% else %}
                          принято
-                    {% endif %}
-                </a></li>
+                    {% endif %}</div>
+                </div>
             {% endfor %}
-        </ul>
     {% endif %}
-</div>
+
 </body>
 </html>

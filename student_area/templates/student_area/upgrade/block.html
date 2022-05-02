@@ -1,7 +1,10 @@
 {% extends 'main_pages/../base.html' %}
 {% load static %}
 
-{% block  header %}<h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">{{ title }}</h2>{% endblock %}
+{% block  header %}
+    <h2 style="color: #033C8A; font-weight: bold; font-size: 35px; font-family: 'Montserrat',sans-serif;">{{ title }}</h2>
+    <a href="/student_page/upgrade/"><img style="margin-top: 2%;transform: rotate(180deg);" src="{% static 'images/Arrow.png' %}"></a>
+{% endblock %}
 {{ error_message }}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/block.css' %}">
@@ -11,19 +14,19 @@
         <a href="/student_page/upgrade/{{ name_block }}/secondpart">
             <div class="container-fluid" id="frame" style="background-color: #007CAD; color: white">
                 <div class="row justify-content-between">
-                <div class="col" id="text" style="color: white">cдать вторую часть</div>
+                <div class="col" id="text" style="color: white">перейти ко второй части</div>
                 <div class="col-auto"><img src={% static 'images/Arrow.png' %}></div>
                 </div>
             </div>
         </a>
     </li>
-    {% for i in num_lessons %}
+        {% for lesson in lessons %}
         <li class="nav-item">
-        {% if i <= last_lesson %}
-            <a href="/student_page/upgrade/{{ name_block }}/{{ i }}">
+        {% if lesson.num <= last_lesson %}
+            <a href="/student_page/upgrade/{{ name_block }}/{{ lesson.num }}">
                 <div class="container-fluid" id="frame" style="background-color: #CDF1FD;">
                     <div class="row justify-content-between">
-                    <div class="col" id="text">{{ i }} день</div>
+                    <div class="col" id="text">{{ lesson.theme }}</div>
                     <div class="col-auto"><img src={% static 'images/Arrow.png' %}></div>
                     </div>
                 </div>
@@ -31,7 +34,7 @@
         {% else %}
             <div class="container-fluid" id="frame" style="background-color: #C7DAF5">
                 <div class="row justify-content-between">
-                <div class="col" id="text">{{ i }} день</div>
+                <div class="col" id="text">{{ lesson.theme }}</div>
                 <div class="col-auto"><img src={% static 'images/lock.png' %}></div>
                 </div>
             </div>
