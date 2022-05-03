@@ -43,12 +43,12 @@ def upgrade(request):
 def second_part(request, name_block):
     if request.user.is_authenticated:
         u = User.objects.get(username=request.user)
-        h_s_p = HomeworkSecondPart.objects.get(who_send=u)
+        h_s_p = HomeworkSecondPart.objects.filter(who_send=u)
         tutor_answer = ''
-        if h_s_p:
+        if h_s_p.exists():
             send = True
-            if h_s_p.status_check == 2:
-                tutor_answer = CheckResult.objects.get(id_h_second_part=h_s_p.id)
+            if h_s_p[0].status_check == 2:
+                tutor_answer = CheckResult.objects.get(id_h_second_part=h_s_p[0].id)
         else:
             send = False
 
@@ -89,6 +89,7 @@ def lesson(request, name_block, num_lesson):
     num_block = b.num_block
     l = Lesson.objects.get(what_block=b, num=num_lesson)
     test = Test.objects.get(what_lesson=l)
+    themes = [i for i in test.what_lesson.theme.split(", ")]
     recent_res = list(Result.objects.filter(user_id=u.id, test_id=test.id))
     questions = list(test.question_set.all())
     quest_choice = {}
@@ -109,6 +110,7 @@ def lesson(request, name_block, num_lesson):
             s.save()
         else:
             user_points = 0
+            max_points = 0
             result = Result(user=u, test=test, all_points=user_points, data_created=datetime.datetime.now())
             result.save()
             i = 0
@@ -145,6 +147,9 @@ def lesson(request, name_block, num_lesson):
                 else:
                     user_point = 0
                 user_points += user_point
+                max_points += q.max_point
+                result.test.max_points = max_points
+                result.test.save()
                 e = EveryQuestionChoice(result_test=result, point=user_point, num_question=i, user_answer=user_answer   )
                 e.save()
             result.all_points = user_points
@@ -165,6 +170,7 @@ def lesson(request, name_block, num_lesson):
         'num_question': [i for i in range(1, test.num_question + 1)],
         'recent_res': recent_res,
         'student': s,
+        'themes': themes,
     })
 
 

@@ -62,6 +62,21 @@ def student(request, id_student):
     s = Student.objects.get(user=User.objects.get(id=id_student))
     task = set([Test.objects.get(id=t.num_task) for t in list(h)])
 
+    content = {}
+    for t in list(h):
+        res = list(Result.objects.filter(user=u, test=Test.objects.get(id=t.num_task)))
+        include = {}
+        for r in range(len(res)):
+            homework_with_one_home_id = h.filter(result_obj=res[r])
+            include[res[r]] = [i.answer for i in list(homework_with_one_home_id)]
+
+        content[Test.objects.get(id=t.num_task)] = include
+    # content = {
+    #    test.object: {
+    #        result.obj: [files]
+    #        }
+    #    }
+
     result_all = list(set([i.result_obj for i in h]))
     context = {}
     for home_id in range(len(result_all)):
@@ -75,6 +90,7 @@ def student(request, id_student):
         'last_name_student': s.last_name,
         'context': context,
         'h_sec_p': context_for_sec_part,
+        'content': content
     })
 
 # [ [file in homework with first_id_result], second_id_result ]

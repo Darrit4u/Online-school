@@ -30,6 +30,7 @@ class Test(models.Model):
     num = models.IntegerField(default=0)  # номер теста
     num_question = models.IntegerField(default=0)  # кол-во вопросов
     theme = models.CharField(max_length=500)  # 1.1 1.2 1.4 нпр
+    max_points = models.IntegerField(default=0)
 
     def __str__(self):
         return "{} {}".format(self.what_block, self.num)

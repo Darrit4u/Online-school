@@ -79,11 +79,17 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Личный кабинет</a></li>
-            <li><a class="dropdown-item" href="#">О нас</a></li>
-            <li><a class="dropdown-item" href="#">Расписание</a></li>
-            <li><a class="dropdown-item" href="#">Курсы</a></li>
-            <li><a class="dropdown-item" href="#">Отзывы</a></li>
+            <li>
+                {% if request.user.is_authenticated %}
+                        <a class="dropdown-item" href="/tutor_page"></a>
+                    {% else %}
+                        <a class="dropdown-item" href="/login"></a>
+                    {% endif %}
+            </li>
+            <li><a class="dropdown-item" href="/about">О нас</a></li>
+            <li><a class="dropdown-item" href="/schedule">Расписание</a></li>
+            <li><a class="dropdown-item" href="/product">Курсы</a></li>
+            <li><a class="dropdown-item" href="/feedback">Отзывы</a></li>
           </ul>
         </div>
           <div class="collapse navbar-collapse" id="navbar">

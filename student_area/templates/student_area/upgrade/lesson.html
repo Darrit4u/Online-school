@@ -39,7 +39,9 @@
     <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 {% endfor %}
-<a href="/file/{{ num_block }}.{{ num_lesson }} .pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку</a>
+{% for theme in themes %}
+<a href="/file/{{ theme }}.pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку {{ theme }}</a><br>
+{% endfor %}
 <div id="test">
 <form method="post">
 {% csrf_token %}
@@ -103,7 +105,7 @@
             {% for res in recent_res %}
                 <div class="row" style="border-bottom: 2px solid #C0C0C0; padding: 1%">
                     <div class="col"><a href="/test/upgrade/{{ res.id }}">Тест за {{ res.data_created }}.</a></div>
-                        <div class="col">Кол-во баллов {{ res.all_points }}.</div>
+                        <div class="col">Кол-во баллов {{ res.all_points }}/{{ res.test.max_points }}.</div>
                         <div class="col">Статус:
                     {% if res.status_check == 0 %}
                         РНО не отправлено

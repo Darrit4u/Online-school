@@ -15,6 +15,7 @@ def get_result(request, id_result):
         test = Test.objects.get(id=res.test_id)
         num_lesson = test.what_lesson.num
         name_block = test.what_block.name
+        themes = [i for i in test.what_lesson.theme.split(", ")]
         questions = list(test.question_set.all())
         quest_choice = {}
         user_choices = EveryQuestionChoice.objects.filter(result_test=res)
@@ -49,6 +50,7 @@ def get_result(request, id_result):
             'quest_choice': quest_choice,  # {question: [choices]}
             'questions': questions,
             'num_question': [i for i in range(1, test.num_question+1)],
+            'themes': themes,
         })
     return HttpResponseRedirect('/login')
 

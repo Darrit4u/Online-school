@@ -40,7 +40,9 @@
 </div>
 {% endfor %}
 <div style="margin-top: 3%">
-<a href="/file/{{ num_block }}.{{ num_lesson }} .pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку</a>
+{% for theme in themes %}
+<a href="/file/{{ theme }}.pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку {{ theme }}</a><br>
+{% endfor %}
 </div>
     <div id="test">
 {% for q, choices_info in quest_choice.items %}
