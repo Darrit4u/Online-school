@@ -101,6 +101,7 @@ class Homework(models.Model):
 
 
 class SecondPart(models.Model):
+    block_obj = models.ForeignKey(Block, on_delete=models.CASCADE)  # номер блока
     theme = models.CharField(max_length=500, default=0)
     path_to_task = models.CharField(max_length=500)  # файл задания
     path_to_key = models.CharField(max_length=500)  # файл с ключами к заданию

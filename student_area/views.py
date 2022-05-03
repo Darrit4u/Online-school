@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
-from rest_framework.response import Response
+import datetime
 
 from .models import *
 from .forms import *
@@ -42,7 +42,20 @@ def upgrade(request):
 
 def second_part(request, name_block):
     if request.user.is_authenticated:
+        error_message = ''
         u = User.objects.get(username=request.user)
+        date_now = datetime.date.today()
+        second_parts = {}
+        s_ps = SecondPart.objects.filter(block_obj=Block.objects.get(name=name_block))
+        for s_p in s_ps:
+            date_up_str = s_p.date_up_key - datetime.timedelta(days=1)
+            month = date_up_str.month
+            month = '0{}'.format(month) if month < 10 else '{}'.format(month)
+            day = date_up_str.day
+            day = '0{}'.format(day) if day < 10 else '{}'.format(day)
+            date_up_str = "{}.{}".format(int(day), month)
+            second_parts[s_p] = date_up_str
+
         h_s_p = HomeworkSecondPart.objects.filter(who_send=u)
         tutor_answer = ''
         if h_s_p.exists():
@@ -53,7 +66,19 @@ def second_part(request, name_block):
             send = False
 
         if request.method == 'POST':
-            s_p = SecondPart.objects.get(id=int(list(request.POST.keys())[1]))
+            id_sec_part = list(request.POST.keys())[1]
+            if id_sec_part == 'docfile':
+                return render(request, 'student_area/upgrade/second_part.html',
+                              dict(
+                                  name_block=name_block,
+                                  send=send,
+                                  h_s_p=h_s_p,
+                                  tutor_answer=tutor_answer,
+                                  second_parts=second_parts,
+                                  date_now=date_now,
+                                  error_message=error_message
+                              ))
+            s_p = SecondPart.objects.get(id=int(id_sec_part))
             form = HomeworkSecondPartForm(request.POST, request.FILES)
             files = request.FILES.getlist('docfile')
             if form.is_valid():
@@ -61,12 +86,25 @@ def second_part(request, name_block):
                     h = HomeworkSecondPart(who_send=u, second_part=s_p, answer=f, date=timezone.now(), status_check=1)
                     h.save()
                 send = True
-        return render(request, 'student_area/upgrade/second_part.html', {
-            'name_block': name_block,
-            'send': send,
-            'h_s_p': h_s_p,
-            'tutor_answer': tutor_answer,
-        })
+        return render(request, 'student_area/upgrade/second_part.html',
+                      dict(
+                          name_block=name_block,
+                          send=send,
+                          h_s_p=h_s_p,
+                          tutor_answer=tutor_answer,
+                          second_parts=second_parts,
+                          date_now=date_now,
+                          error_message=error_message
+                      ))
+    """
+    second_parts = { second_part: {
+        date_open: объект datetime.date, 
+        date_open_str: 4.05, 
+        path_to_task: second_part/....docx, 
+        path_to_key: second_part/... ключи.docx,
+        date_up_key: объект datetime.date
+    date_now = объект datetime.date
+    """
     return HttpResponseRedirect('/login')
 
 
