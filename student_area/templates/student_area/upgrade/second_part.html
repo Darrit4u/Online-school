@@ -8,55 +8,56 @@
 {{ error_message }}
 {% block content %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/block.css' %}">
-
-    {% for second_part, date_up_str  in second_parts.items %}
-    {% if date_now >= second_part.date_open %}
-    <div style="margin: 2% 7%">
-    <div class="col" id="text" style="color: red; font-size: 24px;">сдать до {{ date_up_str }} 23:59 по мск в формате ворд.</div>
-        <div class="container-fluid" id="frame" style="background-color: #C7DAF5;">
-            <div class="row justify-content-between" >
-                <div class="col justify-content-center" id="text">Задание:
-                    <a class=" align-self-center" style="margin-left: auto; margin-right: auto; font-size: 28px" href="/file/{{ second_part.path_to_task }}">нажмите, чтобы скачать задание</a>
-                </div>
-            </div>
-            <div class="row justify-content-center" style="margin-top: 3%">
-                <div class="col">
-                <div style="color: red; text-align: center">{{ error_message }}</div>
-                    <form method="post" enctype="multipart/form-data">
-                          {% csrf_token %}
-                            <div class="mb-3">
-                              <label for="formFileMultiple" class="form-label"></label>
-                              <input class="form-control" type="file" id="formFileMultiple" name="docfile" multiple>
-                            </div>
-                            <div style="margin-top: 2%; margin-left: 1%; display: inline-block;">
-                                {% if send %}
-                                <button type="submit" name="{{ second_part.id }}" class="btn-md btn-outline-secondary" style="border-radius: 15px; width: 100%; font-size: 24px" disabled>Отправить</button>
-                                {% else %}
-                                <button type="submit" name="{{ second_part.id }}" class="btn-md btn-outline-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Отправить</button>
-                                {% endif %}
-                            </div>
-                    </form>
-                </div>
-                <div class="col d-flex justify-content-end" style="margin-top: 2%">
-                {% if send %}
-                    {% if h_s_p.status_check == 2 %}
-                        <div style="font-size: 24px">
-                        <a href="/file/{{ tutor_answer.file_answer }}">нажмите, чтобы скачать ответ куратора</a>
+    {% for second_part, info in second_parts.items %}
+        {% if date_now >= second_part.date_open %}
+        {% for date_up_str, h_s_p in info.items %}
+            <div style="margin: 2% 7%">
+            <div class="col" id="text" style="color: red; font-size: 24px;">сдать до {{ date_up_str }} 23:59 по мск в формате ворд.</div>
+                <div class="container-fluid" id="frame" style="background-color: #C7DAF5;">
+                    <div class="row justify-content-between" >
+                        <div class="col justify-content-center" id="text">Задание:
+                            <a class=" align-self-center" style="margin-left: auto; margin-right: auto; font-size: 28px" href="/file/{{ second_part.path_to_task }}">нажмите, чтобы скачать задание</a>
                         </div>
-                    {% else %}
-                        <div id="text">на проверке</div>
-                    {% endif %}
+                    </div>
+                    <div class="row justify-content-center" style="margin-top: 3%">
+                        {% for send, tutor_answer in h_s_p.items %}
+                        <div class="col">
+                            <form method="post" enctype="multipart/form-data">
+                                  {% csrf_token %}
+                                    <div class="mb-3">
+                                      <label for="formFileMultiple" class="form-label"></label>
+                                      <input class="form-control" type="file" id="formFileMultiple" name="docfile" multiple>
+                                    </div>
+                                    <div style="margin-top: 2%; margin-left: 1%; display: inline-block;">
+                                        {% if send == '1' %}
+                                        <button type="submit" name="{{ second_part.id }}" class="btn-md btn-outline-secondary" style="border-radius: 15px; width: 100%; font-size: 24px" disabled>Отправить</button>
+                                        {% else %}
+                                        <button type="submit" name="{{ second_part.id }}" class="btn-md btn-outline-primary" style="border-radius: 15px; width: 100%; font-size: 24px">Отправить</button>
+                                        {% endif %}
+                                    </div>
+                            </form>
+                        </div>
+                        <div class="col d-flex justify-content-end" style="margin-top: 2%">
+                        {% if send == '1' %}
+                            {% if tutor_answer != '-1' %}
+                                <div style="font-size: 24px">
+                                <a href="/file/{{ tutor_answer.file_answer }}">нажмите, чтобы скачать ответ куратора</a>
+                                </div>
+                            {% else %}
+                                <div id="text">на проверке</div>
+                            {% endif %}
+                        {% endif %}
+                        {% endfor %}
+                        </div>
+                    </div>
+                {% if date_now >= second_part.date_up_key %}
+                <div class="row" style="margin: 3% 0">
+                    <div id="text">Файл с ключами: <a style="font-size: 28px" href="/file/{{ second_part.path_to_key }}">нажмите, чтобы скачать ключи</a></div>
+                </div>
                 {% endif %}
                 </div>
             </div>
-        {% if date_now >= second_part.date_up_key %}
-        <div class="row" style="margin: 3% 0">
-            <div id="text">Файл с ключами: <a style="font-size: 28px" href="/file/{{ second_part.path_to_key }}">нажмите, чтобы скачать ключи</a></div>
-        </div>
+            {% endfor %}
         {% endif %}
-        </div>
-    </div>
-    {% endif %}
     {% endfor %}
-
 {% endblock %}

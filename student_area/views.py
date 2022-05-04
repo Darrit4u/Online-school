@@ -44,40 +44,11 @@ def second_part(request, name_block):
     if request.user.is_authenticated:
         error_message = ''
         u = User.objects.get(username=request.user)
-        date_now = datetime.date.today()
-        second_parts = {}
-        s_ps = SecondPart.objects.filter(block_obj=Block.objects.get(name=name_block))
-        for s_p in s_ps:
-            date_up_str = s_p.date_up_key - datetime.timedelta(days=1)
-            month = date_up_str.month
-            month = '0{}'.format(month) if month < 10 else '{}'.format(month)
-            day = date_up_str.day
-            day = '0{}'.format(day) if day < 10 else '{}'.format(day)
-            date_up_str = "{}.{}".format(int(day), month)
-            second_parts[s_p] = date_up_str
-
-        h_s_p = HomeworkSecondPart.objects.filter(who_send=u)
-        tutor_answer = ''
-        if h_s_p.exists():
-            send = True
-            if h_s_p[0].status_check == 2:
-                tutor_answer = CheckResult.objects.get(id_h_second_part=h_s_p[0].id)
-        else:
-            send = False
 
         if request.method == 'POST':
             id_sec_part = list(request.POST.keys())[1]
             if id_sec_part == 'docfile':
-                return render(request, 'student_area/upgrade/second_part.html',
-                              dict(
-                                  name_block=name_block,
-                                  send=send,
-                                  h_s_p=h_s_p,
-                                  tutor_answer=tutor_answer,
-                                  second_parts=second_parts,
-                                  date_now=date_now,
-                                  error_message=error_message
-                              ))
+                return HttpResponseRedirect('/student_page/upgrade/{}/secondpart'.format(name_block))
             s_p = SecondPart.objects.get(id=int(id_sec_part))
             form = HomeworkSecondPartForm(request.POST, request.FILES)
             files = request.FILES.getlist('docfile')
@@ -86,12 +57,33 @@ def second_part(request, name_block):
                     h = HomeworkSecondPart(who_send=u, second_part=s_p, answer=f, date=timezone.now(), status_check=1)
                     h.save()
                 send = True
+        date_now = datetime.date.today()
+        second_parts = {}
+        s_ps = SecondPart.objects.filter(block_obj=Block.objects.get(name=name_block))
+        for s_p in s_ps:
+            # заполнение инфы про вторые части
+            date_up_str = s_p.date_up_key - datetime.timedelta(days=1)
+            month = date_up_str.month
+            month = '0{}'.format(month) if month < 10 else '{}'.format(month)
+            day = date_up_str.day
+            day = '0{}'.format(day) if day < 10 else '{}'.format(day)
+            date_up_str = "{}.{}".format(int(day), month)
+            second_parts[s_p] = date_up_str
+
+            # заполнение инфы про отправленные решения второй части
+            h_s_p = HomeworkSecondPart.objects.filter(who_send=u, second_part=s_p)
+            h_s_p_dict = {'0': '-1'}  # -1 означает отуствие ответа куратора
+            if h_s_p.exists():
+                h_s_p_dict = {'1': '-1'}
+                if h_s_p[0].status_check == 2:
+                    h_s_p_dict = {'1': CheckResult.objects.get(id_h_second_part=h_s_p[0].id)}
+
+            # итоговый словарь
+            second_parts[s_p] = {date_up_str: h_s_p_dict}
+
         return render(request, 'student_area/upgrade/second_part.html',
                       dict(
                           name_block=name_block,
-                          send=send,
-                          h_s_p=h_s_p,
-                          tutor_answer=tutor_answer,
                           second_parts=second_parts,
                           date_now=date_now,
                           error_message=error_message

@@ -19,6 +19,13 @@
         margin-top: 2%;
         transform: rotate(180deg);
     }
+    #arrow_down {
+        transform: rotate(90deg);
+    }
+    #scroll_bottom {
+        background-color: white;
+        border: 0px;
+    }
     #video {
         width: 100%;
         margin-top: 2%;
@@ -28,12 +35,23 @@
     }
 </style>
 
+    <script>
+$(function(){
+	$('#scroll_bottom').click(function(){
+		$('html, body').animate({scrollTop: $(document).height() - $(window).height()}, 100);
+		return false;
+	});
+});
+    </script>
+
 </head>
 <body>
 <div id="main">
 <h2 style="color: #033C8A; font-weight: bold; font-size: 35px;">задание №{{ num_lesson }}</h2>
-<a href="/student_page/upgrade/{{ name_block }}"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a>
-
+<div class="row">
+    <div class="col d-flex align-self-start"><a href="/student_page/upgrade/{{ name_block }}"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a></div>
+    <div class="col d-flex align-self-end justify-content-end"><button id="scroll_bottom"><img id="arrow_down" src="{% static 'images/Arrow.png' %}"></button></div>
+</div>
 {% for video in videos %}
 <div id="video" class="d-flex justify-content-center">
     <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

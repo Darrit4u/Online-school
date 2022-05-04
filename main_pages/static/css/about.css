@@ -1,0 +1,17 @@
+#header {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 35px;
+    color: #033C8A;
+}
+#text {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 28px;
+    color: #033C8A;
+}
+.container .row {
+    margin-top: 5%;
+}

@@ -71,7 +71,7 @@ class Result(models.Model):
 
 
 class EveryQuestionChoice(models.Model):
-    result_test = models.ForeignKey(Result, on_delete=models.CASCADE)
+    result_test = models.ForeignKey(Result, on_delete=models.DO_NOTHING)
     point = models.IntegerField(default=-1)
     num_question = models.IntegerField(default=0)
     user_answer = models.CharField(max_length=500)
