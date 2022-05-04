@@ -119,7 +119,10 @@ def lesson(request, name_block, num_lesson):
     num_block = b.num_block
     l = Lesson.objects.get(what_block=b, num=num_lesson)
     test = Test.objects.get(what_lesson=l)
-    themes = [i for i in test.what_lesson.theme.split(", ")]
+    if test.what_lesson.theme == 'Пробник':
+        themes = '0'
+    else:
+        themes = [i for i in test.what_lesson.theme.split(", ")]
     recent_res = list(Result.objects.filter(user_id=u.id, test_id=test.id))
     questions = list(test.question_set.all())
     quest_choice = {}
@@ -200,7 +203,7 @@ def lesson(request, name_block, num_lesson):
         'num_question': [i for i in range(1, test.num_question + 1)],
         'recent_res': recent_res,
         'student': s,
-        'themes': themes,
+            'themes': themes,
     })
 
 
@@ -210,10 +213,9 @@ def block(request, name_block):
         if Student.objects.filter(user=u).exists():
             if Student.objects.get(user=u).upgrade:
                 b = Block.objects.get(name=name_block)
-                lessons = list(Lesson.objects.filter(what_block=b))
+                lessons = list(Lesson.objects.filter(what_block=b).order_by('num'))
                 last_lesson = Student.objects.get(user=u).last_lesson_upgrade
                 num_lessons = [i for i in range(1, b.num_lessons + 1)]
-                print(lessons)
                 return render(request, 'student_area/upgrade/block.html', {
                     'title': NAME_BLOCK_UPGRADE[name_block],
                     'num_lessons': num_lessons,

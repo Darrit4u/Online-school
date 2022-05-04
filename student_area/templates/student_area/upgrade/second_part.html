@@ -11,11 +11,15 @@
     {% for second_part, info in second_parts.items %}
         {% if date_now >= second_part.date_open %}
         {% for date_up_str, h_s_p in info.items %}
-            <div style="margin: 2% 7%">
+            <div style="margin: 3% 7%">
+            {% if date_now <= second_part.date_up_key %}
             <div class="col" id="text" style="color: red; font-size: 24px;">сдать до {{ date_up_str }} 23:59 по мск в формате ворд.</div>
+            {% else %}
+            <div class="col" id="text" style="color: #033C8A; font-size: 24px;">дедлайн прошел</div>
+            {% endif %}
                 <div class="container-fluid" id="frame" style="background-color: #C7DAF5;">
                     <div class="row justify-content-between" >
-                        <div class="col justify-content-center" id="text">Задание:
+                        <div class="col justify-content-center" id="text">{{ second_part.theme }} (задание):
                             <a class=" align-self-center" style="margin-left: auto; margin-right: auto; font-size: 28px" href="/file/{{ second_part.path_to_task }}">нажмите, чтобы скачать задание</a>
                         </div>
                     </div>

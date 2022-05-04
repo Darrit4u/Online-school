@@ -52,14 +52,25 @@ $(function(){
     <div class="col d-flex align-self-start"><a href="/student_page/upgrade/{{ name_block }}"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a></div>
     <div class="col d-flex align-self-end justify-content-end"><button id="scroll_bottom"><img id="arrow_down" src="{% static 'images/Arrow.png' %}"></button></div>
 </div>
+
 {% for video in videos %}
+{% if video != '0' %}
 <div id="video" class="d-flex justify-content-center">
     <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
+{% endif %}
 {% endfor %}
+
+{% if themes != '0' %}
 {% for theme in themes %}
 <a href="/file/{{ theme }}.pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку {{ theme }}</a><br>
 {% endfor %}
+{% else %}
+    <div style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:28px; text-align: left; margin: 4% 0">
+    Вторая часть находится в разделе "Перейти ко второй части".<br> Файл и дедлайн можете найти там.
+    </div>
+{% endif %}
+
 <div id="test">
 <form method="post">
 {% csrf_token %}
