@@ -9,15 +9,3 @@ def index(request):
 
 def about(request):
     return render(request, 'main_pages/about.html')
-
-
-def schedule(request):
-    return render(request, 'base.html')
-
-
-def product(request):
-    return render(request, 'base.html')
-
-
-def feedback(request):
-    return render(request, 'base.html')
