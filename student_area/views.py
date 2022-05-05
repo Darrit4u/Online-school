@@ -90,7 +90,7 @@ def lesson(request, name_block, num_lesson):
     l = Lesson.objects.get(what_block=b, num=num_lesson)
     test = Test.objects.get(what_lesson=l)
     themes = [i for i in test.what_lesson.theme.split(", ")]
-    recent_res = list(Result.objects.filter(user_id=u.id, test_id=test.id))
+    recent_res = list(Result.objects.filter(user=u, test=test))
     questions = list(test.question_set.all())
     quest_choice = {}
     for question in questions:
@@ -117,7 +117,7 @@ def lesson(request, name_block, num_lesson):
             for answer in list(request.POST.keys())[1:-1]:
                 user_point = 0
                 q = questions[i]
-                user_answer = request.POST[answer]
+                user_answer = ('').join(request.POST[answer].split())
                 a = Answer(user=u, question=q, choice=user_answer, result=result)
                 a.save()
                 i += 1

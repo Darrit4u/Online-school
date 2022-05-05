@@ -53,7 +53,7 @@
             {{ q.text }}<br><br>
             {% for info, choices in choices_info.items %}
                 {% if info == 'photo' %}
-                    <img src="/file/{{ choices }}" alt="Фото к заданию">
+                    <img class="mx-auto d-block img-fluid justify-content-center" src="/file/{{ choices }}" alt="Фото к заданию">
                 {% else %}
                     {% for choice in choices %}
                         {{ choice }}<br>
