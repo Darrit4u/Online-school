@@ -48,20 +48,25 @@
     <div class="row justify-content-md-center">
         <div class="col text-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 35px; margin-bottom: 3%">РНО</div>
     </div>
-    <div class="row justify-content-md-center">
+    <div class="row justify-content-md-center" style="margin: 5%">
     <ul class="navbar-nav">
-    {% for t in task %}
+    {% for test, res_info in content.items %}
         <li class="nav-item">
             <div class="container-fluid" id="frame" style="background-color: #CDF1FD;">
-                <div class="row d-flex justify-content-md-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 28px; text-align: center; margin-bottom: 3%; margin-left: 2%">Блок {{ t.what_block.readable_name }}. Тест {{ t.what_lesson.num }}</div>
-                {% for res, i in context.items %}
-                    <div class="row">
+                <div class="row d-flex justify-content-md-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 28px; text-align: center; margin-bottom: 3%; margin-left: 2%">Блок {{ test.what_block.readable_name }}. Тест {{ test.what_lesson.num }}</div>
+                {% for res, files in res_info.items %}
+                    <div class="row" style="border-bottom: 2px solid #94B7F0; margin:2%;">
+                    <div class="col d-flex align-self-start">
+                        <a href="/test/upgrade/{{ res.id }}"><div style="font-family: 'Montserrat', sans-serif; font-size: 20px; width: 100%"> Ссылка на тест за {{ res.data_created }}.</div></a>
+                    </div>
+                        <div class="col d-flex align-self-center"><div style="font-family: 'Montserrat', sans-serif; font-size: 20px;">Баллов за тест {{ res.all_points }}/{{ res.test.max_points }}</div></div>
+                    {% if files %}
                     <div class="col" style="margin-bottom: 3%">
-                        {% for file in i %}
-                            <div class="row"><a href="/file/{{ file }}"><div style="font-family: 'Montserrat', sans-serif; font-size: 24px; width: 100%">{{ file }}</div> </a><br></div>
+                        {% for file in files %}
+                            <div class="row"><a href="/file/{{ file }}"><div style="font-family: 'Montserrat', sans-serif; font-size: 24px; width: 100%">Скачать ответ студента</div> </a><br></div>
                         {% endfor %}
                     </div>
-                        <div class="col">
+                    <div class="col">
                             <form method="post" enctype="multipart/form-data">
                               {% csrf_token %}
                                 <div style="margin-top: 2%; margin-left: 1%; display: inline-block;">
@@ -73,14 +78,14 @@
                                 </div>
                             </form>
                         </div>
+                    {% else %}
+                        <div class="col d-flex justify-content-center" id="text" style="font-size: 24px"> РНО еще не сдано</div>
+                    {% endif %}
                     </div>
                 {% endfor %}
-            </div>
-        </li>
     {% endfor %}
     </ul>
     </div>
     </div>
-
     </div>
 {% endblock %}

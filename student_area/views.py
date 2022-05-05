@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import GenericAPIView
-import datetime
+from rest_framework.response import Response
 
 from .models import *
 from .forms import *
@@ -42,14 +42,18 @@ def upgrade(request):
 
 def second_part(request, name_block):
     if request.user.is_authenticated:
-        error_message = ''
         u = User.objects.get(username=request.user)
+        h_s_p = HomeworkSecondPart.objects.filter(who_send=u)
+        tutor_answer = ''
+        if h_s_p.exists():
+            send = True
+            if h_s_p[0].status_check == 2:
+                tutor_answer = CheckResult.objects.get(id_h_second_part=h_s_p[0].id)
+        else:
+            send = False
 
         if request.method == 'POST':
-            id_sec_part = list(request.POST.keys())[1]
-            if id_sec_part == 'docfile':
-                return HttpResponseRedirect('/student_page/upgrade/{}/secondpart'.format(name_block))
-            s_p = SecondPart.objects.get(id=int(id_sec_part))
+            s_p = SecondPart.objects.get(id=int(list(request.POST.keys())[1]))
             form = HomeworkSecondPartForm(request.POST, request.FILES)
             files = request.FILES.getlist('docfile')
             if form.is_valid():
@@ -57,46 +61,12 @@ def second_part(request, name_block):
                     h = HomeworkSecondPart(who_send=u, second_part=s_p, answer=f, date=timezone.now(), status_check=1)
                     h.save()
                 send = True
-        date_now = datetime.date.today()
-        second_parts = {}
-        s_ps = SecondPart.objects.filter(block_obj=Block.objects.get(name=name_block))
-        for s_p in s_ps:
-            # заполнение инфы про вторые части
-            date_up_str = s_p.date_up_key - datetime.timedelta(days=1)
-            month = date_up_str.month
-            month = '0{}'.format(month) if month < 10 else '{}'.format(month)
-            day = date_up_str.day
-            day = '0{}'.format(day) if day < 10 else '{}'.format(day)
-            date_up_str = "{}.{}".format(int(day), month)
-            second_parts[s_p] = date_up_str
-
-            # заполнение инфы про отправленные решения второй части
-            h_s_p = HomeworkSecondPart.objects.filter(who_send=u, second_part=s_p)
-            h_s_p_dict = {'0': '-1'}  # -1 означает отуствие ответа куратора
-            if h_s_p.exists():
-                h_s_p_dict = {'1': '-1'}
-                if h_s_p[0].status_check == 2:
-                    h_s_p_dict = {'1': CheckResult.objects.get(id_h_second_part=h_s_p[0].id)}
-
-            # итоговый словарь
-            second_parts[s_p] = {date_up_str: h_s_p_dict}
-
-        return render(request, 'student_area/upgrade/second_part.html',
-                      dict(
-                          name_block=name_block,
-                          second_parts=second_parts,
-                          date_now=date_now,
-                          error_message=error_message
-                      ))
-    """
-    second_parts = { second_part: {
-        date_open: объект datetime.date, 
-        date_open_str: 4.05, 
-        path_to_task: second_part/....docx, 
-        path_to_key: second_part/... ключи.docx,
-        date_up_key: объект datetime.date
-    date_now = объект datetime.date
-    """
+        return render(request, 'student_area/upgrade/second_part.html', {
+            'name_block': name_block,
+            'send': send,
+            'h_s_p': h_s_p,
+            'tutor_answer': tutor_answer,
+        })
     return HttpResponseRedirect('/login')
 
 
@@ -119,10 +89,7 @@ def lesson(request, name_block, num_lesson):
     num_block = b.num_block
     l = Lesson.objects.get(what_block=b, num=num_lesson)
     test = Test.objects.get(what_lesson=l)
-    if test.what_lesson.theme == 'Пробник':
-        themes = '0'
-    else:
-        themes = [i for i in test.what_lesson.theme.split(", ")]
+    themes = [i for i in test.what_lesson.theme.split(", ")]
     recent_res = list(Result.objects.filter(user_id=u.id, test_id=test.id))
     questions = list(test.question_set.all())
     quest_choice = {}
@@ -203,7 +170,7 @@ def lesson(request, name_block, num_lesson):
         'num_question': [i for i in range(1, test.num_question + 1)],
         'recent_res': recent_res,
         'student': s,
-            'themes': themes,
+        'themes': themes,
     })
 
 
@@ -213,9 +180,10 @@ def block(request, name_block):
         if Student.objects.filter(user=u).exists():
             if Student.objects.get(user=u).upgrade:
                 b = Block.objects.get(name=name_block)
-                lessons = list(Lesson.objects.filter(what_block=b).order_by('num'))
+                lessons = list(Lesson.objects.filter(what_block=b))
                 last_lesson = Student.objects.get(user=u).last_lesson_upgrade
                 num_lessons = [i for i in range(1, b.num_lessons + 1)]
+                print(lessons)
                 return render(request, 'student_area/upgrade/block.html', {
                     'title': NAME_BLOCK_UPGRADE[name_block],
                     'num_lessons': num_lessons,
