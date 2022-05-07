@@ -10,7 +10,8 @@ class StudentAdmin(admin.ModelAdmin):
         'email',
         'upgrade',
         'tutor',
-        'last_lesson_upgrade'
+        'last_lesson_upgrade',
+        'last_block_upgrade'
         )
 
 admin.site.register(Student, StudentAdmin)

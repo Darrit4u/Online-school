@@ -84,6 +84,7 @@ class EveryQuestionChoiceAdmin(admin.ModelAdmin):
 
 class SecondPartAdmin(admin.ModelAdmin):
     list_display = (
+        'block_obj',
         'theme',
         'path_to_task',
         'path_to_key',

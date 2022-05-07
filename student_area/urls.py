@@ -10,6 +10,9 @@ urlpatterns = [
     re_path(r'upgrade/(?P<name_block>\w+)/(?P<num_lesson>\d+)', views.lesson, name='send_homework'),
     re_path(r'upgrade/(?P<name_block>\w+)', views.block),
     re_path(r'upgrade', views.upgrade, name='upgrade'),
+    re_path(r'trial/lesson', views.trial_lesson),
+#    re_path(r'trial/video', views.trial_video),
+    re_path(r'trial', views.trial),
     re_path(r'settings', views.settings, name='settings'),
     re_path(r'', views.home, name='home'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

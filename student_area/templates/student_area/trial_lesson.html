@@ -47,29 +47,25 @@ $(function(){
 </head>
 <body>
 <div id="main">
-<h2 style="color: #033C8A; font-weight: bold; font-size: 35px;">задание №{{ num_lesson }}</h2>
+<h2 style="color: #033C8A; font-weight: bold; font-size: 35px;">задание №1</h2>
 <div class="row">
-    <div class="col d-flex align-self-start"><a href="/student_page/upgrade/{{ name_block }}"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a></div>
+    <div class="col d-flex align-self-start"><a href="/student_page/trial"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a></div>
     <div class="col d-flex align-self-end justify-content-end"><button id="scroll_bottom"><img id="arrow_down" src="{% static 'images/Arrow.png' %}"></button></div>
 </div>
 
-{% for video in videos %}
-{% if video != '0' %}
 <div id="video" class="d-flex justify-content-center">
-    <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="747" height="420" src="https://youtube.com/embed/qPUOKTjJ_OI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
-{% endif %}
-{% endfor %}
+<div id="video" class="d-flex justify-content-center">
+    <iframe width="747" height="420" src="https://youtube.com/embed/-kV45DmmDNU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+<div id="video" class="d-flex justify-content-center">
+    <iframe width="747" height="420" src="https://youtube.com/embed/EzHsNc53kJ8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
-{% if themes != '0' %}
-{% for theme in themes %}
-<a href="/file/{{ theme }}.pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку {{ theme }}</a><br>
-{% endfor %}
-{% else %}
-    <div style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:28px; text-align: left; margin: 4% 0">
-    Вторая часть находится в разделе "Перейти ко второй части".<br> Файл и дедлайн можете найти там.
-    </div>
-{% endif %}
+<a href="/file/1.1.pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку 1.1</a><br>
+<a href="/file/1.2.pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку 1.2</a><br>
+<a href="/file/1.4.pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку 1.4</a><br>
 
 <div id="test">
 <form method="post">
@@ -82,10 +78,10 @@ $(function(){
             {{ q.text }}<br><br>
             {% for info, choices in choices_info.items %}
                 {% if info == 'photo' %}
-                    <img class="mx-auto d-block img-fluid" src="/file/{{ choices }}" alt="Фото к заданию">
+                    <img src="/file/{{ choices }}" alt="Фото к заданию">
                 {% elif info == 'any' %}
-                    {% for photo, choices_list in choices.items %}
-                    <img class="mx-auto d-block img-fluid" src="/file/{{ photo }}" alt="Фото к заданию">
+                    {% for photo, choices_list in choices %}
+                    <img src="/file/{{ photo }}" alt="Фото к заданию">
                         {% for choice in choices_list %}
                             {{ choice }}<br>
                         {% endfor %}
@@ -154,5 +150,5 @@ $(function(){
             {% endfor %}
     {% endif %}
 
+</div>
 </body>
-</html>

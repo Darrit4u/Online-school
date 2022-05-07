@@ -35,14 +35,20 @@
 <a href="/student_page/upgrade/{{ name_block }}"><img id="arrow" src="{% static 'images/Arrow.png' %}"></a>
 
 {% for video in videos %}
+{% if video != '0' %}
 <div id="video" class="d-flex justify-content-center">
     <iframe width="747" height="420" src="{{ video }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
+{% endif %}
 {% endfor %}
 <div style="margin-top: 3%">
+
+{% if themes != '0' %}
 {% for theme in themes %}
 <a href="/file/{{ theme }}.pdf" style="font-family: 'Montserrat', sans-serif; font-weight: 500; color:#033C8A; font-size:23px;">Скрипт к уроку {{ theme }}</a><br>
 {% endfor %}
+{% endif %}
+
 </div>
     <div id="test">
 {% for q, choices_info in quest_choice.items %}
@@ -58,7 +64,14 @@
             {{ q.text }}<br><br>
             {% for info, choices in choices_info.items %}
                 {% if info == 'photo' %}
-                    <img class="mx-auto d-block img-fluid justify-content-center" src="/file/{{ choices }}" alt="Фото к заданию">
+                    <img class="mx-auto d-block img-fluid" src="/file/{{ choices }}" alt="Фото к заданию">
+                {% elif info == 'any' %}
+                    {% for photo, choices_list in choices.items %}
+                    <img class="mx-auto d-block img-fluid" src="/file/{{ photo }}" alt="Фото к заданию">
+                        {% for choice in choices_list %}
+                            {{ choice }}<br>
+                        {% endfor %}
+                    {% endfor %}
                 {% else %}
                     {% for choice in choices %}
                         {{ choice }}<br>

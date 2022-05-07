@@ -15,18 +15,30 @@ def get_result(request, id_result):
         test = Test.objects.get(id=res.test_id)
         num_lesson = test.what_lesson.num
         name_block = test.what_block.name
-        themes = [i for i in test.what_lesson.theme.split(", ")]
+        if test.what_lesson.theme == 'Пробник':
+            themes = '0'
+        else:
+            themes = [i for i in test.what_lesson.theme.split(", ")]
+
         questions = list(test.question_set.all())
         quest_choice = {}
         user_choices = EveryQuestionChoice.objects.filter(result_test=res)
         for question in questions:
-            choices = Choice.objects.get(question=question).text.splitlines()
-            if len(choices) == 1:
-                quest_choice[question] = {'photo': choices[0]}
+            choices = Choice.objects.get(question=question)
+            choices_t = choices.text
+            choices_lines = choices_t.splitlines()
+            if choices.photo_or_not:
+                if len(choices_lines) == 1:
+                    quest_choice[question] = {'photo': choices_lines[0]}
+                else:
+                    list_ch_with_photo = []
+                    for i in range(1, len(choices_lines)):
+                        list_ch_with_photo.append("{}. {}".format(i, choices_lines[i]))
+                    quest_choice[question] = {'any': {str(choices_lines[0]): list_ch_with_photo}}
             else:
-                for i in range(len(choices)):
-                    choices[i] = "{}. {}".format(i + 1, choices[i])
-                quest_choice[question] = {'text': choices}
+                for i in range(len(choices_lines)):
+                    choices_lines[i] = "{}. {}".format(i + 1, choices_lines[i])
+                quest_choice[question] = {'text': choices_lines}
 
         if request.method == 'POST':
             form = HomeworkForm(request.POST, request.FILES)

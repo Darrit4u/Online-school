@@ -53,7 +53,12 @@
     {% for test, res_info in content.items %}
         <li class="nav-item">
             <div class="container-fluid" id="frame" style="background-color: #CDF1FD;">
-                <div class="row d-flex justify-content-md-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 28px; text-align: center; margin-bottom: 3%; margin-left: 2%">Блок {{ test.what_block.readable_name }}. Тест {{ test.what_lesson.num }}</div>
+                {% if test.what_lesson.theme == "Пробник" %}
+                <div class="row d-flex justify-content-md-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 28px; text-align: center; margin-bottom: 3%; margin-left: 2%">Блок {{ test.what_block.readable_name }}. Пробник</div>
+                {% else %}
+                <div class="row d-flex justify-content-md-center" style="font-family: 'Montserrat', sans-serif; color: #033C8A; font-weight: bold; font-size: 28px; text-align: center; margin-bottom: 3%; margin-left: 2%">Блок {{ test.what_block.readable_name }}. 
+                Тест по  темам {{ test.what_lesson.theme }}</div>
+                {% endif %}
                 {% for res, files in res_info.items %}
                     <div class="row" style="border-bottom: 2px solid #94B7F0; margin:2%;">
                     <div class="col d-flex align-self-start">

@@ -19,6 +19,7 @@ class Student(models.Model):
     email = models.CharField(max_length=600)
     upgrade = models.BooleanField(default=False)
     last_lesson_upgrade = models.IntegerField(default=0)
+    last_block_upgrade = models.IntegerField(default=1)
     tutor = models.ForeignKey(Tutor, on_delete=models.CASCADE)
 
     def __str__(self):
